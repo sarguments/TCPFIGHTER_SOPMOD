@@ -42,9 +42,9 @@ bool CFrameSkip::FrameSkip(void)
 
 	if (_diffSum < 20)
 	{
-		WCHAR temp[20];
-		wsprintf(temp, L"< 20 : %d\n", _diffSum);
-		OutputDebugString(temp);
+		WCHAR toDebugText[20];
+		wsprintf(toDebugText, L"< 20 : %d\n", _diffSum);
+		OutputDebugString(toDebugText);
 
 		Sleep(static_cast<DWORD>(20 - _diffSum));
 		_diffSum = 0;
@@ -56,9 +56,9 @@ bool CFrameSkip::FrameSkip(void)
 	}
 	else
 	{
-		WCHAR temp[20];
-		wsprintf(temp, L"> 20 = %d\n", _diffSum);
-		OutputDebugString(temp);
+		WCHAR toDebugText[20];
+		wsprintf(toDebugText, L"> 20 = %d\n", _diffSum);
+		OutputDebugString(toDebugText);
 
 		_diffSum -= 20;
 

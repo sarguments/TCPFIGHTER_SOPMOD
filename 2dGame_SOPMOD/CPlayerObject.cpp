@@ -287,7 +287,7 @@ void CPlayerObject::SetActionMove(DWORD action)
 		}
 	}
 
-	wcout << L"Set Actioni Move" << endl;
+	//wcout << L"Set Actioni Move" << endl;
 	_dwActionCur = action;
 }
 
