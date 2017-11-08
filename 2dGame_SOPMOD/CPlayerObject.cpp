@@ -60,7 +60,6 @@ Draw(void)
 			GetCurX(), GetCurY(), bypDest, iDestWidth, iDestHeight, iDestPitch);
 	}
 
-
 	// HP°ÔÀÌÁö
 	pLocalSpDib->DrawSprite(e_SPRITE::eGUAGE_HP,
 		GetCurX() - 35, GetCurY() + 9, bypDest, iDestWidth, iDestHeight, iDestPitch, GetHP());
