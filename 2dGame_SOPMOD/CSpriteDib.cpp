@@ -455,8 +455,12 @@ void CSpriteDib::DrawSpriteRed(int iSpriteIndex, int iDrawX, int iDrawY,
 			byRed = *(pMySrcImage + 2);
 			byGray = (byBlue + byGreen + byRed) / 3;
 
-			*pMySrcImage = byGray;
-			*(pMySrcImage + 1) = byGray;
+			//*pMySrcImage = byGray;
+			//*(pMySrcImage + 1) = byGray;
+			//*(pMySrcImage + 2) = byGray;
+
+			*pMySrcImage = byBlue / 2;
+			*(pMySrcImage + 1) = byGreen / 2;
 			*(pMySrcImage + 2) = byGray;
 
 			*(DWORD*)toDest = *(DWORD*)pMySrcImage;

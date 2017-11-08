@@ -49,8 +49,17 @@ Draw(void)
 		GetCurX(), GetCurY(), bypDest, iDestWidth, iDestHeight, iDestPitch);
 
 	// 플레이어
-	pLocalSpDib->DrawSprite(GetSprite(),
-		GetCurX(), GetCurY(), bypDest, iDestWidth, iDestHeight, iDestPitch);
+	if (_bPlayerCharacter)
+	{
+		pLocalSpDib->DrawSpriteRed(GetSprite(),
+			GetCurX(), GetCurY(), bypDest, iDestWidth, iDestHeight, iDestPitch);
+	}
+	else
+	{
+		pLocalSpDib->DrawSprite(GetSprite(),
+			GetCurX(), GetCurY(), bypDest, iDestWidth, iDestHeight, iDestPitch);
+	}
+
 
 	// HP게이지
 	pLocalSpDib->DrawSprite(e_SPRITE::eGUAGE_HP,
