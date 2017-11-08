@@ -2,7 +2,7 @@
 #include "CBaseObject.h"
 
 CBaseObject::CBaseObject()
-	:_bSpriteEnd(false), _bEndFrame(false)
+	:_bSpriteEnd(false), _bEndFrame(false), _dwActionInput(999)
 {
 }
 

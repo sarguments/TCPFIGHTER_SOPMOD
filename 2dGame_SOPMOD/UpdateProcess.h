@@ -17,5 +17,4 @@ extern bool g_winActive;
 
 void KeyProcess(void);
 void Action(void);
-//void FrameSkip(void);
 void Draw(void);

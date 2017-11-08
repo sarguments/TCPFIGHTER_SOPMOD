@@ -183,10 +183,6 @@ void CSpriteDib::DrawSprite(int iSpriteIndex, int iDrawX, int iDrawY,
 	BYTE* destFirst = toDest;
 	BYTE* lineFirst = pMySrcImage;
 
-	//BYTE byBlue;
-	//BYTE byGreen;
-	//BYTE byRed;
-
 	for (int i = 0; i < spriteHeight; i++)
 	{
 		for (int j = 0; j < spriteWidth; j++)
@@ -201,19 +197,7 @@ void CSpriteDib::DrawSprite(int iSpriteIndex, int iDrawX, int iDrawY,
 				continue;
 			}
 
-			//byBlue = *pMySrcImage;
-			//byGreen = *(pMySrcImage + 1);
-			//byRed = *(pMySrcImage + 2);
-
-			//// ¹ÝÅõ¸í
-			//*pMySrcImage = (byBlue + *toDest) / 2;
-			//*(pMySrcImage + 1) = (byGreen + *(toDest + 1)) / 2;
-			//*(pMySrcImage + 2) = (byRed + *(toDest + 2)) / 2;
-
 			*(DWORD*)toDest = *(DWORD*)pMySrcImage;
-
-			//*((DWORD*)toDest) = ((*(DWORD*)pMySrcImage >> 1) & 0x007f7f7f) + ((*(DWORD*)toDest >> 1) & 0x007f7f7f);
-			//*(DWORD*)toDest = (((*(DWORD*)pMySrcImage) + (*(DWORD*)toDest)) >> 1) & 0x007f7f7f; // ¾ÈµÊ
 
 			toDest += 4;
 			pMySrcImage += 4;

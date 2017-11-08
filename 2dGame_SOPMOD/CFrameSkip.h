@@ -2,22 +2,24 @@
 
 class CFrameSkip
 {
-public:
-	CFrameSkip();
-	~CFrameSkip();
-	bool FrameSkip(void);
+protected:
 
-private:
-	//DWORD _dwSystemTick;
-	//int _iMaxFPS;
-	//int _iOneFrameTick;
-	//int _iTick;
+	int	_maxFPS;
 
-	LARGE_INTEGER _freq;
-	LARGE_INTEGER _nowTick;
-	LARGE_INTEGER _oldTick;
-	__int64 _diffSum;
+	// 프레임 속도 조절시 사용하게될 Tick 값. 한프레임에 사용되는 Tick 값.
+	// 1000 / m_iMaxFPS
+	int	_oneFrameTick;
+
+	// FrameSkip() 을 호출하기 전 timeGetTime 으로 얻은 Tick 값.
+	DWORD _systemTick;
+
+	int	_tick;
 	int _tickCount;
+	int _oneSecond;
 
-	LARGE_INTEGER _oneSecond;
+public:
+	CFrameSkip(int iMaxFPS);
+	~CFrameSkip();
+
+	bool FrameSkip(void);
 };

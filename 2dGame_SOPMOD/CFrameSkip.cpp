@@ -1,70 +1,84 @@
 #include "stdafx.h"
-#include "CFrameSkip.h"
 
-CFrameSkip::CFrameSkip()
-	: _diffSum(0), _tickCount(0)
+#include "CScreenDib.h"
+#include "CFrameSkip.h"
+#include <Mmsystem.h>
+
+CFrameSkip::CFrameSkip(int iMaxFPS)
 {
-	// 고해상도 타이머의 주파수를 얻는다.
-	QueryPerformanceFrequency(&_freq);
-	QueryPerformanceCounter(&_oldTick);
+	_maxFPS = iMaxFPS; // 최대 FPS(50)
+	_oneFrameTick = 1000 / iMaxFPS; // 한 프레임당 Tick 값
+	_systemTick = timeGetTime();
+
+	_tick = 0;
+	_tickCount = 0;
+	_oneSecond = timeGetTime();
 }
 
 CFrameSkip::~CFrameSkip()
 {
 }
 
-bool CFrameSkip::FrameSkip(void)
+bool CFrameSkip::FrameSkip()
 {
-	// 1초에 50번 돈다
-	// 1초 = 1000ms, 1000 / 50 = 20
-	// 한번도는데 20ms걸려야 한다.
+	DWORD myTic;
+	bool byReturnFlag = false;
 
-	// TODO : 프레임 스킵 FPS, 표시 순서는 고민
-	LARGE_INTEGER nowTime;
-	QueryPerformanceCounter(&nowTime);
-
-	if ((_oneSecond.QuadPart / (_freq.QuadPart / 1000)) + 1000 <
-		(nowTime.QuadPart / (_freq.QuadPart / 1000)))
+	if (_tick < _oneFrameTick)
 	{
-		WCHAR titleText[100];
-		wsprintf(titleText, L"FPS : %d", _tickCount);
+		if (_oneSecond + 1000 < (int)timeGetTime())
+		{
+			WCHAR titleText[255];
+			wsprintf(titleText, L"FPS : %d", _tickCount);
 
-		HWND hWnd = FindWindow(L"TCP_FIGHTER", NULL);
-		SetWindowText(hWnd, titleText);
+			HWND hWnd = FindWindow(L"TCP_FIGHTER", NULL);
+			SetWindowText(hWnd, titleText);
 
-		_tickCount = 0;
-		QueryPerformanceCounter(&_oneSecond);
+			_tickCount = 0;
+			_oneSecond = timeGetTime();
+		}
+
+		// 현재 시간 구하기
+		myTic = timeGetTime();
+
+		// 현재시간 - 이전에 빠져나오기 전 구한 시간 .. 의 차를 누적 합산
+		_tick += myTic - _systemTick;
+
+		// 한 프레임의 시간이 덜 된 경우.
+		if (_tick < _oneFrameTick) // 누적 값이 20보다 작으면
+		{
+			Sleep(_oneFrameTick - _tick);
+
+			myTic = timeGetTime(); // 슬립한 후 현재시간 다시 넣어준다
+
+								   // 빠른 만큼 슬립 했으니까 20 넣어준다(나중에 무조건 20 뺄것임)
+			_tick = _oneFrameTick; // m_iTick = 20
+
+			byReturnFlag = true;
+		}	// 한 프레임의 시간을 넘어버린 경우.
+		else if (_tick - _oneFrameTick >= _oneFrameTick)
+		{
+			// 누적 프레임이 m_iOneFrameTick보다 크면 false
+			byReturnFlag = false;
+		}
+		else
+		{
+			// 조금 넘었을 경우는 true
+			byReturnFlag = true;
+		}
 	}
 
-	// FrameSkip
-	QueryPerformanceCounter(&_nowTick);
-	_diffSum += (_nowTick.QuadPart - _oldTick.QuadPart) / (_freq.QuadPart / 1000);
+	// 빠져나오기전 시간 구하기
+	_systemTick = timeGetTime();
 
-	if (_diffSum < 20)
+	// 함수 빠져나오면 20프레임 소비된 걸로
+	// 20프레임 뺀 나머지 누적값은 계속 보관
+	_tick -= _oneFrameTick;
+
+	if (byReturnFlag == true)
 	{
-		WCHAR toDebugText[20];
-		wsprintf(toDebugText, L"< 20 : %d\n", _diffSum);
-		OutputDebugString(toDebugText);
-
-		Sleep(static_cast<DWORD>(20 - _diffSum));
-		_diffSum = 0;
-
-		// true일때 카운트
-		++_tickCount;
-
-		QueryPerformanceCounter(&_oldTick);
-	}
-	else
-	{
-		WCHAR toDebugText[20];
-		wsprintf(toDebugText, L"> 20 = %d\n", _diffSum);
-		OutputDebugString(toDebugText);
-
-		_diffSum -= 20;
-
-		QueryPerformanceCounter(&_oldTick);
-		return false;
+		_tickCount++;
 	}
 
-	return true;
+	return byReturnFlag;
 }
