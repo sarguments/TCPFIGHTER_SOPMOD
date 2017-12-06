@@ -1,6 +1,9 @@
 #include "stdafx.h"
+#include "hoxy_Header.h"
+
 #include "CBaseObject.h"
 
+// TODO : _dwActionInput ±âº»°ª 999
 CBaseObject::CBaseObject()
 	:_bSpriteEnd(false), _bEndFrame(false), _dwActionInput(999)
 {

@@ -1,4 +1,6 @@
 #include "stdafx.h"
+#include "hoxy_Header.h"
+
 #include "CPlayerObject.h"
 #include "CScreenDib.h"
 #include "CSpriteDib.h"
@@ -21,8 +23,7 @@ CPlayerObject::~CPlayerObject()
 {
 }
 
-bool CPlayerObject::
-Action(void)
+bool CPlayerObject::Action(void)
 {
 	// 다음 프레임으로 애니메이션
 	NextFrame();
@@ -30,8 +31,7 @@ Action(void)
 	return false;
 }
 
-bool CPlayerObject::
-Draw(void)
+bool CPlayerObject::Draw(void)
 {
 	// 계속 전역 객체 참조하지 말고 로컬로 포인터 받아서 쓴다.
 	CScreenDib* pLocalScDib = &g_ScreenDib;
@@ -67,11 +67,12 @@ Draw(void)
 	return true;
 }
 
+// TODO : 액션이 바뀔때 체크
 void CPlayerObject::ActionProc(void)
 {
 	switch (_dwActionCur)
 	{
-		// 공격은 마저 처리
+	// 공격은 마저 처리
 	case dfACTION_ATTACK1:
 	case dfACTION_ATTACK2:
 	case dfACTION_ATTACK3:
@@ -286,7 +287,7 @@ void CPlayerObject::SetActionMove(DWORD action)
 		}
 	}
 
-	//wcout << L"Set Actioni Move" << endl;
+	//wcout << L"Set Action Move" << endl;
 	_dwActionCur = action;
 }
 

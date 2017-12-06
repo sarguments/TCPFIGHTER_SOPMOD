@@ -1,4 +1,6 @@
 #include "stdafx.h"
+#include "hoxy_Header.h"
+
 #include "UpdateProcess.h"
 
 #include "CScreenDib.h"
@@ -20,27 +22,23 @@ void KeyProcess(void)
 	DWORD dwAction = dfACTION_STAND;
 
 	// 방향키
-	if (GetAsyncKeyState(VK_LEFT) & 0x8000 &&
-		GetAsyncKeyState(VK_UP) & 0x8000)
+	if (GetAsyncKeyState(VK_LEFT) & 0x8000 && GetAsyncKeyState(VK_UP) & 0x8000)
 	{
 		dwAction = dfACTION_MOVE_LU;
 	}
-	else if (GetAsyncKeyState(VK_RIGHT) & 0x8000 &&
-		GetAsyncKeyState(VK_UP) & 0x8000)
+	else if (GetAsyncKeyState(VK_RIGHT) & 0x8000 &&	GetAsyncKeyState(VK_UP) & 0x8000)
 	{
 		dwAction = dfACTION_MOVE_RU;
 	}
-	else if (GetAsyncKeyState(VK_RIGHT) & 0x8000 &&
-		GetAsyncKeyState(VK_DOWN) & 0x8000)
+	else if (GetAsyncKeyState(VK_RIGHT) & 0x8000 &&	GetAsyncKeyState(VK_DOWN) & 0x8000)
 	{
 		dwAction = dfACTION_MOVE_RD;
 	}
-	else if (GetAsyncKeyState(VK_LEFT) & 0x8000 &&
-		GetAsyncKeyState(VK_DOWN) & 0x8000)
+	else if (GetAsyncKeyState(VK_LEFT) & 0x8000 && GetAsyncKeyState(VK_DOWN) & 0x8000)
 	{
 		dwAction = dfACTION_MOVE_LD;
 	}
-	else if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+	else if (GetAsyncKeyState(VK_LEFT) & 0x8000) 
 	{
 		dwAction = dfACTION_MOVE_LL;
 	}
@@ -61,10 +59,6 @@ void KeyProcess(void)
 	if (GetAsyncKeyState(0x5A) & 0x8000) // Z
 	{
 		dwAction = dfACTION_ATTACK1;
-
-		// TODO : 이펙트 생성 테스트
-		CBaseObject* newEffect = new CEffectObject(1);
-		g_ObjectList.push_back(newEffect);
 	}
 	else if (GetAsyncKeyState(0x58) & 0x8000) // X
 	{
@@ -81,10 +75,10 @@ void KeyProcess(void)
 
 void Action(void)
 {
-	g_ObjectList.sort([]
-	(CBaseObject* a, CBaseObject* b)
-	{
-		// TODO : 이펙트는 맨 앞으로
+	g_ObjectList.sort([](CBaseObject* a, CBaseObject* b)
+	{	// true 가 앞으로, false가 뒤로
+
+		// 이펙트는 맨 앞으로
 		if (a->GetObjectType() == e_OBJECT_TYPE::eTYPE_EFFECT)
 		{
 			return false;
@@ -103,6 +97,7 @@ void Action(void)
 	std::list<CBaseObject*>::iterator nowIter = g_ObjectList.begin();
 	std::list<CBaseObject*>::iterator endIter = g_ObjectList.end();
 
+	// List 돌면서 Action 호출
 	while (nowIter != endIter)
 	{
 		if ((*nowIter)->Action() == true)
@@ -138,7 +133,7 @@ void Draw(void)
 	pLocalSpDib->DrawImage(0, 0, 0, bypDest, iDestWidth, iDestHeight, iDestPitch);
 
 	//------------------------------------------------------------
-	// 2. 캐릭터 출력
+	// 2. 캐릭터 출력 ( 기타 오브젝트 )
 	//------------------------------------------------------------
 	for (auto& i : g_ObjectList)
 	{
@@ -147,5 +142,7 @@ void Draw(void)
 
 	// Dib 버퍼의 내용을 화면으로 출력
 	pLocalScDib->DrawBuffer(g_hWnd);
+
+	// 기아현상 방지
 	Sleep(0);
 }

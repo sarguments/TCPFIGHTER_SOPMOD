@@ -1,5 +1,6 @@
 #include "stdafx.h"
-//#include "DefineEnum.h"
+#include "hoxy_Header.h"
+
 #include "CSpriteDib.h"
 
 CSpriteDib::CSpriteDib(int iMaxSprite, DWORD dwColorKey)

@@ -1,4 +1,6 @@
 #include "stdafx.h"
+#include "hoxy_Header.h"
+
 #include "GameInit.h"
 
 #include "CScreenDib.h"
@@ -8,13 +10,8 @@
 #include "CPlayerObject.h"
 #include "CEffectObject.h"
 
-#include <Mmsystem.h>
-#pragma comment(lib, "Winmm.lib")
-
 bool GameInit(void)
 {
-	timeBeginPeriod(1);
-
 	//g_SpriteDib.LoadDibSprite(0, L"SpriteData\\_Map.bmp", 0, 0);
 	//g_SpriteDib.LoadDibSprite(1, L"SpriteData\\Attack1_L_01.bmp", 71, 90);
 	//g_SpriteDib.LoadDibSprite(1, L"SpriteData\\Attack1_L_02.bmp", 71, 90);
@@ -177,6 +174,7 @@ bool GameInit(void)
 	// CBaseObject* g_pPlayerObject;
 	// 여기서 일단 테스트용 객체들 생성
 
+	/*
 	static int playerNum = 1;
 
 	std::list<CBaseObject*>* pLocalList = &g_ObjectList;
@@ -212,6 +210,7 @@ bool GameInit(void)
 	pTestObject3->SetObjectType(e_OBJECT_TYPE::eTYPE_PLAYER);
 	pTestObject3->SetSprite(e_SPRITE::ePLAYER_STAND_L01, e_SPRITE::ePLAYER_STAND_L_MAX, dfDELAY_STAND);
 	pLocalList->push_back(pTestObject3);
+	*/
 
 	return true;
 }

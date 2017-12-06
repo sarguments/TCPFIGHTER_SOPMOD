@@ -34,6 +34,12 @@
     <Filter Include="헤더 파일\Process">
       <UniqueIdentifier>{45a9b6ff-f9f3-44c6-813c-c30b20b6d720}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Lib">
+      <UniqueIdentifier>{efa4f45d-659e-4471-99ce-f1c90f3c73a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Lib">
+      <UniqueIdentifier>{e6124cfb-e3e1-4a5f-9628-b601be10deb3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CSpriteDib.h">
@@ -66,14 +72,26 @@
     <ClInclude Include="CPlayerObject.h">
       <Filter>헤더 파일\Object</Filter>
     </ClInclude>
-    <ClInclude Include="CFrameSkip.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="UpdateProcess.h">
       <Filter>헤더 파일\Process</Filter>
     </ClInclude>
     <ClInclude Include="GameInit.h">
       <Filter>헤더 파일\Process</Filter>
+    </ClInclude>
+    <ClInclude Include="hoxy_CmdStart.h">
+      <Filter>헤더 파일\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="hoxy_Header.h">
+      <Filter>헤더 파일\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="hoxy_SockUtill.h">
+      <Filter>헤더 파일\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="RingBuffer_AEK999.h">
+      <Filter>헤더 파일\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="CFrameSkip.h">
+      <Filter>헤더 파일\Lib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -104,8 +122,17 @@
     <ClCompile Include="GameInit.cpp">
       <Filter>소스 파일\Process</Filter>
     </ClCompile>
+    <ClCompile Include="hoxy_CmdStart.cpp">
+      <Filter>소스 파일\Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="hoxy_SockUtill.cpp">
+      <Filter>소스 파일\Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="RingBuffer_AEK999.cpp">
+      <Filter>소스 파일\Lib</Filter>
+    </ClCompile>
     <ClCompile Include="CFrameSkip.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\Lib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

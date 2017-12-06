@@ -1,4 +1,6 @@
 #include "stdafx.h"
+#include "hoxy_Header.h"
+
 #include "CEffectObject.h"
 #include "CPlayerObject.h"
 #include "CScreenDib.h"
@@ -93,8 +95,6 @@ bool CEffectObject::Action(void)
 
 bool CEffectObject::Draw(void)
 {
-	// TODO : 이펙트 그리기 임시
-
 	// 계속 전역 객체 참조하지 말고 로컬로 포인터 받아서 쓴다.
 	CScreenDib* pLocalScDib = &g_ScreenDib;
 	CSpriteDib* pLocalSpDib = &g_SpriteDib;
@@ -112,6 +112,7 @@ bool CEffectObject::Draw(void)
 		return false;
 	}
 
+	// TODO : 이펙트 그리기
 	pLocalSpDib->DrawSprite(GetSprite(),
 		100 + 20, 100 + 20, bypDest, iDestWidth, iDestHeight, iDestPitch);
 

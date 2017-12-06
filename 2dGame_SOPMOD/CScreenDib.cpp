@@ -1,4 +1,6 @@
 #include "stdafx.h"
+#include "hoxy_Header.h"
+
 #include "CScreenDib.h"
 
 CScreenDib::CScreenDib(int iWidth, int iHeight, int iColorBit)

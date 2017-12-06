@@ -1,8 +1,8 @@
 #include "stdafx.h"
+#include "hoxy_Header.h"
 
 #include "CScreenDib.h"
 #include "CFrameSkip.h"
-#include <Mmsystem.h>
 
 CFrameSkip::CFrameSkip(int iMaxFPS)
 {

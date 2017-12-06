@@ -150,8 +150,12 @@
     <ClInclude Include="CSpriteDib.h" />
     <ClInclude Include="DefineEnum.h" />
     <ClInclude Include="CPlayerObject.h" />
+    <ClInclude Include="hoxy_CmdStart.h" />
+    <ClInclude Include="hoxy_Header.h" />
+    <ClInclude Include="hoxy_SockUtill.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="CScreenDib.h" />
+    <ClInclude Include="RingBuffer_AEK999.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="UpdateProcess.h" />
@@ -166,6 +170,9 @@
     <ClCompile Include="CScreenDib.cpp" />
     <ClCompile Include="CPlayerObject.cpp" />
     <ClCompile Include="GameInit.cpp" />
+    <ClCompile Include="hoxy_CmdStart.cpp" />
+    <ClCompile Include="hoxy_SockUtill.cpp" />
+    <ClCompile Include="RingBuffer_AEK999.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
