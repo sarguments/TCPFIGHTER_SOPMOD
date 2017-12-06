@@ -153,6 +153,7 @@
     <ClInclude Include="hoxy_CmdStart.h" />
     <ClInclude Include="hoxy_Header.h" />
     <ClInclude Include="hoxy_SockUtill.h" />
+    <ClInclude Include="PacketDefine.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="CScreenDib.h" />
     <ClInclude Include="RingBuffer_AEK999.h" />

@@ -28,6 +28,8 @@ bool CPlayerObject::Action(void)
 	// 다음 프레임으로 애니메이션
 	NextFrame();
 	ActionProc();
+
+	// TODO : 여기서 보낼까?
 	return false;
 }
 
@@ -72,7 +74,7 @@ void CPlayerObject::ActionProc(void)
 {
 	switch (_dwActionCur)
 	{
-	// 공격은 마저 처리
+		// 공격은 마저 처리
 	case dfACTION_ATTACK1:
 	case dfACTION_ATTACK2:
 	case dfACTION_ATTACK3:

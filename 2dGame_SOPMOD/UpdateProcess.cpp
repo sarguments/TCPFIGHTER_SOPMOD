@@ -26,11 +26,11 @@ void KeyProcess(void)
 	{
 		dwAction = dfACTION_MOVE_LU;
 	}
-	else if (GetAsyncKeyState(VK_RIGHT) & 0x8000 &&	GetAsyncKeyState(VK_UP) & 0x8000)
+	else if (GetAsyncKeyState(VK_RIGHT) & 0x8000 && GetAsyncKeyState(VK_UP) & 0x8000)
 	{
 		dwAction = dfACTION_MOVE_RU;
 	}
-	else if (GetAsyncKeyState(VK_RIGHT) & 0x8000 &&	GetAsyncKeyState(VK_DOWN) & 0x8000)
+	else if (GetAsyncKeyState(VK_RIGHT) & 0x8000 && GetAsyncKeyState(VK_DOWN) & 0x8000)
 	{
 		dwAction = dfACTION_MOVE_RD;
 	}
@@ -38,7 +38,7 @@ void KeyProcess(void)
 	{
 		dwAction = dfACTION_MOVE_LD;
 	}
-	else if (GetAsyncKeyState(VK_LEFT) & 0x8000) 
+	else if (GetAsyncKeyState(VK_LEFT) & 0x8000)
 	{
 		dwAction = dfACTION_MOVE_LL;
 	}
@@ -77,7 +77,6 @@ void Action(void)
 {
 	g_ObjectList.sort([](CBaseObject* a, CBaseObject* b)
 	{	// true 가 앞으로, false가 뒤로
-
 		// 이펙트는 맨 앞으로
 		if (a->GetObjectType() == e_OBJECT_TYPE::eTYPE_EFFECT)
 		{

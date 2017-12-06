@@ -25,3 +25,5 @@ using std::endl;
 
 #include "hoxy_CmdStart.h"
 #include "hoxy_SockUtill.h"
+
+#include "PacketDefine.h"
