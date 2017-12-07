@@ -153,6 +153,7 @@
     <ClInclude Include="hoxy_CmdStart.h" />
     <ClInclude Include="hoxy_Header.h" />
     <ClInclude Include="hoxy_SockUtill.h" />
+    <ClInclude Include="NetworkProcess.h" />
     <ClInclude Include="PacketDefine.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="CScreenDib.h" />
@@ -173,6 +174,7 @@
     <ClCompile Include="GameInit.cpp" />
     <ClCompile Include="hoxy_CmdStart.cpp" />
     <ClCompile Include="hoxy_SockUtill.cpp" />
+    <ClCompile Include="NetworkProcess.cpp" />
     <ClCompile Include="RingBuffer_AEK999.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

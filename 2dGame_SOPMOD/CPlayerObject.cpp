@@ -5,17 +5,17 @@
 #include "CScreenDib.h"
 #include "CSpriteDib.h"
 
-CPlayerObject::CPlayerObject()
-	: _chHP(100), _bPlayerCharacter(false)
-{
-	SetDirection(dfDIR_LEFT);
-	SetObjectType(e_OBJECT_TYPE::eTYPE_PLAYER);
-}
+//CPlayerObject::CPlayerObject(CHAR hp)
+//	: _chHP(hp), _bPlayerCharacter(false)
+//{
+//	SetDirection(dfDIR_LEFT);
+//	SetObjectType(e_OBJECT_TYPE::eTYPE_PLAYER);
+//}
 
-CPlayerObject::CPlayerObject(bool bPlayer)
-	: _chHP(100), _bPlayerCharacter(bPlayer)
+CPlayerObject::CPlayerObject(CHAR hp, bool bPlayer, int dir)
+	: _chHP(hp), _bPlayerCharacter(bPlayer)
 {
-	SetDirection(dfDIR_LEFT);
+	SetDirection(dir);
 	SetObjectType(e_OBJECT_TYPE::eTYPE_PLAYER);
 }
 

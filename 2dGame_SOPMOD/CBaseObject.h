@@ -17,13 +17,16 @@ public:
 	int GetOldY(void);
 	int GetSprite(void);
 	bool isEndFrame(void);
+
+	void SetPosition(int x, int y);
+	void SetObjectID(int param);
+	void SetSprite(int iSpriteStart, int iSpriteMax, int iFrameDelay);
+
+protected:
 	void NextFrame(void);
 	void SetCurPosition(int x, int y);
-	void SetObjectID(int param);
-	void SetObjectType(int param);
 	void SetOldPosition(int x, int y);
-	void SetPosition(int x, int y);
-	void SetSprite(int iSpriteStart, int iSpriteMax, int iFrameDelay);
+	void SetObjectType(int param);
 
 protected:
 	bool _bEndFrame;

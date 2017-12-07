@@ -4,7 +4,6 @@
 
 패킷데이터 정의.
 
-
 자신의 캐릭터에 대한 패킷을 서버에게 보낼 때, 모두 자신이 먼저
 액션을 취함과 동시에 패킷을 서버로 보내주도록 한다.
 
@@ -13,9 +12,11 @@
 - 충돌 처리 및 데미지에 대한 정보는 서버에서 처리 후 통보하게 된다.
 
 ---------------------------------------------------------------*/
+#define UM_NETWORK (WM_USER + 1)
 
 // TCP
 #define SERVERPORT 5000
+#define HEADERSIZE 4
 
 /////////////////////////////////////////////////////////////////
 //---------------------------------------------------------------
@@ -28,6 +29,8 @@ BYTE	Size;			// 패킷 사이즈.  (실제 페이로드 사이즈, 헤더/End �
 BYTE	Type;			// 패킷타입.
 BYTE	Temp;			// 사용안함.
 */
+
+#pragma pack(push, 1)
 struct st_NETWORK_PACKET_HEADER
 {
 	BYTE	_Code;			// 패킷코드 0x89 고정.
@@ -35,7 +38,7 @@ struct st_NETWORK_PACKET_HEADER
 	BYTE	_Type;			// 패킷타입.
 	BYTE	_Temp;			// 사용안함.
 };
-
+#pragma pack(pop)
 
 //---------------------------------------------------------------
 // 패킷의 가장 앞에 들어갈 패킷코드.
@@ -46,15 +49,13 @@ struct st_NETWORK_PACKET_HEADER
 //---------------------------------------------------------------
 #define dfNETWORK_PACKET_END	((BYTE)0x79)
 
-
-
 #define	dfPACKET_SC_CREATE_MY_CHARACTER			0
 //---------------------------------------------------------------
 // 0 - 클라이언트 자신의 캐릭터 할당		Server -> [Client]
 //
 // 서버에 접속시 최초로 받게되는 패킷으로 자신이 할당받은 ID 와
 // 자신의 최초 위치, HP 를 받게 된다. (처음에 한번 받게 됨)
-// 
+//
 // 이 패킷을 받으면 자신의 ID,X,Y,HP 를 저장하고 캐릭터를 생성시켜야 한다.
 //
 //	4	-	ID
@@ -64,6 +65,7 @@ struct st_NETWORK_PACKET_HEADER
 //	1	-	HP
 //
 //---------------------------------------------------------------
+#pragma pack(push, 1)
 struct stPACKET_SC_CREATE_MY_CHARACTER
 {
 	DWORD	_ID;
@@ -72,6 +74,7 @@ struct stPACKET_SC_CREATE_MY_CHARACTER
 	WORD	_Y;
 	BYTE	_HP;
 };
+#pragma pack(pop)
 
 #define	dfPACKET_SC_CREATE_OTHER_CHARACTER		1
 //---------------------------------------------------------------
@@ -88,6 +91,7 @@ struct stPACKET_SC_CREATE_MY_CHARACTER
 //	1	-	HP
 //
 //---------------------------------------------------------------
+#pragma pack(push, 1)
 struct stPACKET_SC_CREATE_OTHER_CHARACTER
 {
 	DWORD	_ID;
@@ -96,6 +100,7 @@ struct stPACKET_SC_CREATE_OTHER_CHARACTER
 	WORD	_Y;
 	BYTE	_HP;
 };
+#pragma pack(pop)
 
 #define	dfPACKET_SC_DELETE_CHARACTER			2
 //---------------------------------------------------------------
@@ -106,11 +111,12 @@ struct stPACKET_SC_CREATE_OTHER_CHARACTER
 //	4	-	ID
 //
 //---------------------------------------------------------------
+#pragma pack(push, 1)
 struct stPACKET_SC_DELETE_CHARACTER
 {
 	DWORD	_ID;
 };
-
+#pragma pack(pop)
 
 #define	dfPACKET_CS_MOVE_START					10
 /////////////////////////////////////////////////////////////////
@@ -128,12 +134,14 @@ struct stPACKET_SC_DELETE_CHARACTER
 //	2	-	Y
 //
 //---------------------------------------------------------------
+#pragma pack(push, 1)
 struct stPACKET_CS_MOVE_START
 {
 	BYTE	_Direction;
 	WORD	_X;
 	WORD	_Y;
 };
+#pragma pack(pop)
 
 #define dfPACKET_MOVE_DIR_LL					0
 #define dfPACKET_MOVE_DIR_LU					1
@@ -144,16 +152,13 @@ struct stPACKET_CS_MOVE_START
 #define dfPACKET_MOVE_DIR_DD					6
 #define dfPACKET_MOVE_DIR_LD					7
 
-
-
-
 #define	dfPACKET_SC_MOVE_START					11
 //---------------------------------------------------------------
 // 캐릭터 이동시작 패킷						Server -> [Client]
 //
 // 다른 유저의 캐릭터 이동시 본 패킷을 받는다.
 // 패킷 수신시 해당 캐릭터를 찾아 이동처리를 해주도록 한다.
-// 
+//
 // 패킷 수신 시 해당 키가 계속해서 눌린것으로 생각하고
 // 해당 방향으로 계속 이동을 하고 있어야만 한다.
 //
@@ -163,6 +168,7 @@ struct stPACKET_CS_MOVE_START
 //	2	-	Y
 //
 //---------------------------------------------------------------
+#pragma pack(push, 1)
 struct stPACKET_SC_MOVE_START
 {
 	DWORD	_ID;
@@ -170,8 +176,7 @@ struct stPACKET_SC_MOVE_START
 	WORD	_X;
 	WORD	_Y;
 };
-
-
+#pragma pack(pop)
 
 #define	dfPACKET_CS_MOVE_STOP					12
 /////////////////////////////////////////////////////////////////
@@ -185,18 +190,20 @@ struct stPACKET_SC_MOVE_START
 //	2	-	Y
 //
 //---------------------------------------------------------------
+#pragma pack(push, 1)
 struct stPACKET_CS_MOVE_STOP
 {
 	BYTE	_Direction;
 	WORD	_X;
 	WORD	_Y;
 };
+#pragma pack(pop)
 
 #define	dfPACKET_SC_MOVE_STOP					13
 //---------------------------------------------------------------
 // 캐릭터 이동중지 패킷						Server -> [Client]
 //
-// ID 에 해당하는 캐릭터가 이동을 멈춘것이므로 
+// ID 에 해당하는 캐릭터가 이동을 멈춘것이므로
 // 캐릭터를 찾아서 방향과, 좌표를 입력해주고 멈추도록 처리한다.
 //
 //	4	-	ID
@@ -205,6 +212,7 @@ struct stPACKET_CS_MOVE_STOP
 //	2	-	Y
 //
 //---------------------------------------------------------------
+#pragma pack(push, 1)
 struct stPACKET_SC_MOVE_STOP
 {
 	DWORD	_ID;
@@ -212,7 +220,7 @@ struct stPACKET_SC_MOVE_STOP
 	WORD	_X;
 	WORD	_Y;
 };
-
+#pragma pack(pop)
 
 #define	dfPACKET_CS_ATTACK1						20
 /////////////////////////////////////////////////////////////////
@@ -226,15 +234,17 @@ struct stPACKET_SC_MOVE_STOP
 //
 //	1	-	Direction	( 방향 디파인 값. 좌/우만 사용 )
 //	2	-	X
-//	2	-	Y	
+//	2	-	Y
 //
 //---------------------------------------------------------------
+#pragma pack(push, 1)
 struct stPACKET_CS_ATTACK1
 {
 	BYTE	_Direction;
 	WORD	_X;
 	WORD	_Y;
 };
+#pragma pack(pop)
 
 #define	dfPACKET_SC_ATTACK1						21
 //---------------------------------------------------------------
@@ -249,6 +259,7 @@ struct stPACKET_CS_ATTACK1
 //	2	-	Y
 //
 //---------------------------------------------------------------
+#pragma pack(push, 1)
 struct stPACKET_SC_ATTACK1
 {
 	DWORD	_ID;
@@ -256,7 +267,7 @@ struct stPACKET_SC_ATTACK1
 	WORD	_X;
 	WORD	_Y;
 };
-
+#pragma pack(pop)
 
 #define	dfPACKET_CS_ATTACK2						22
 /////////////////////////////////////////////////////////////////
@@ -273,12 +284,14 @@ struct stPACKET_SC_ATTACK1
 //	2	-	Y
 //
 //---------------------------------------------------------------
+#pragma pack(push, 1)
 struct stPACKET_CS_ATTACK2
 {
 	BYTE	_Direction;
 	WORD	_X;
 	WORD	_Y;
 };
+#pragma pack(pop)
 
 #define	dfPACKET_SC_ATTACK2						23
 //---------------------------------------------------------------
@@ -293,6 +306,7 @@ struct stPACKET_CS_ATTACK2
 //	2	-	Y
 //
 //---------------------------------------------------------------
+#pragma pack(push, 1)
 struct stPACKET_SC_ATTACK2
 {
 	DWORD	_ID;
@@ -300,6 +314,7 @@ struct stPACKET_SC_ATTACK2
 	WORD	_X;
 	WORD	_Y;
 };
+#pragma pack(pop)
 
 #define	dfPACKET_CS_ATTACK3						24
 /////////////////////////////////////////////////////////////////
@@ -316,12 +331,14 @@ struct stPACKET_SC_ATTACK2
 //	2	-	Y
 //
 //---------------------------------------------------------------
+#pragma pack(push, 1)
 struct stPACKET_CS_ATTACK3
 {
 	BYTE	_Direction;
 	WORD	_X;
 	WORD	_Y;
 };
+#pragma pack(pop)
 
 #define	dfPACKET_SC_ATTACK3						25
 //---------------------------------------------------------------
@@ -336,6 +353,7 @@ struct stPACKET_CS_ATTACK3
 //	2	-	Y
 //
 //---------------------------------------------------------------
+#pragma pack(push, 1)
 struct stPACKET_SC_ATTACK3
 {
 	DWORD	_ID;
@@ -343,7 +361,7 @@ struct stPACKET_SC_ATTACK3
 	WORD	_X;
 	WORD	_Y;
 };
-
+#pragma pack(pop)
 
 #define	dfPACKET_SC_DAMAGE						30
 //---------------------------------------------------------------
@@ -356,9 +374,11 @@ struct stPACKET_SC_ATTACK3
 //	1	-	DamageHP	( 피해자 HP )
 //
 //---------------------------------------------------------------
+#pragma pack(push, 1)
 struct stPACKET_SC_DAMAGE
 {
 	DWORD _AttackID;
 	DWORD _DamageID;
 	BYTE _DamageHP;
 };
+#pragma pack(pop)

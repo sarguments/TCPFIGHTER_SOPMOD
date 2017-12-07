@@ -16,8 +16,8 @@ class CPlayerObject :
 	public CBaseObject
 {
 public:
-	CPlayerObject();
-	CPlayerObject(bool bPlayer);
+	//CPlayerObject(CHAR hp);
+	CPlayerObject(CHAR hp, bool bPlayer, int dir);
 	virtual ~CPlayerObject();
 
 	virtual bool Action(void);
