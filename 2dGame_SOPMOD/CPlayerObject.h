@@ -30,7 +30,6 @@ public:
 	void SetDirection(int param);
 	void SetHP(CHAR param);
 
-	// TODO : Get함수 하나 만든다
 	DWORD GetActionCur(void);
 
 private:
@@ -41,11 +40,16 @@ private:
 	void SetActionMove(DWORD action);
 	void SetActionStand(void);
 
-private:
-	bool _bPlayerCharacter;
-	CHAR _chHP;
+public:
 	DWORD _dwActionCur;
 	DWORD _dwActionOld;
+	bool _bPlayerCharacter;
+
+private:
+	//bool _bPlayerCharacter;
+	CHAR _chHP;
+	//DWORD _dwActionCur;
+	//DWORD _dwActionOld;
 	int _iDirCur;
 	int _iDirOld;
 };

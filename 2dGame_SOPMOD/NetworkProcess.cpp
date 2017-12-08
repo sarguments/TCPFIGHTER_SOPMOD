@@ -248,6 +248,7 @@ void SC_CREATE_MY_CHARACTER(void)
 		newObject->SetSprite(e_SPRITE::ePLAYER_STAND_R01, e_SPRITE::ePLAYER_STAND_R_MAX, dfDELAY_STAND);
 	}
 
+	g_pPlayerObject = newObject;
 	g_ObjectList.push_back(newObject);
 }
 
@@ -259,6 +260,8 @@ void SC_CREATE_OTHER_CHARACTER(void)
 	CBaseObject* newObject = new CPlayerObject(localBuf._HP, false, localBuf._Direction);
 	newObject->SetPosition(localBuf._X, localBuf._Y);
 	newObject->SetObjectID(localBuf._ID);
+
+	wcout << L"_bPlayerCharacter = " << ((CPlayerObject*)newObject)->_bPlayerCharacter << endl;
 
 	if (localBuf._Direction == dfDIR_LEFT)
 	{
@@ -393,6 +396,7 @@ void SC_MOVE_STOP(void)
 	}
 
 	(*iter)->ActionInput(dfACTION_STAND);
+	wcout << L"________SC_MOVE_STOP________" << endl;
 }
 
 void SC_ATTACK1(void)
@@ -473,7 +477,6 @@ void SC_ATTACK3(void)
 void SC_DAMAGE(void)
 {
 	// TODO : °ø°ÝÀÚ ID?
-
 	stPACKET_SC_DAMAGE localBuf;
 	g_recvQ.Dequeue((char*)&localBuf, sizeof(stPACKET_SC_DAMAGE));
 

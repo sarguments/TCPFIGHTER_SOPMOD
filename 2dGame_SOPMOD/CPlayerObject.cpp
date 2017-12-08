@@ -15,6 +15,7 @@
 CPlayerObject::CPlayerObject(CHAR hp, bool bPlayer, int dir)
 	: _chHP(hp), _bPlayerCharacter(bPlayer)
 {
+	//_iDirOld = dir;
 	SetDirection(dir);
 	SetObjectType(e_OBJECT_TYPE::eTYPE_PLAYER);
 }
@@ -29,6 +30,8 @@ bool CPlayerObject::Action(void)
 	NextFrame();
 	ActionProc();
 
+	if (_dwActionOld != _dwActionCur)
+		wcout << _dwActionCur << endl;
 	// TODO : 여기서 보낼까?
 	return false;
 }
@@ -69,7 +72,6 @@ bool CPlayerObject::Draw(void)
 	return true;
 }
 
-// TODO : 액션이 바뀔때 체크
 void CPlayerObject::ActionProc(void)
 {
 	switch (_dwActionCur)
@@ -84,8 +86,13 @@ void CPlayerObject::ActionProc(void)
 			// 기본동작으로 돌아감
 			SetActionStand();
 
-			// 입력 초기화
-			_dwActionInput = dfACTION_STAND;
+			// 입력이 들어온순간 공격이 끝나면 입력을 덮어쓰는 문제
+			// 실제로 새로운 입력이 들어온 경우는 그냥 패스한다.
+			if (_dwActionInput == 9999)
+			{
+				_dwActionInput = dfACTION_STAND;
+				wcout << L"***** action end _dwActionInput = dfACTION_STAND" << endl;
+			}
 		}
 	}
 	break;
@@ -191,17 +198,23 @@ void CPlayerObject::InputActionProc()
 	break;
 	case dfACTION_ATTACK1:
 	{
+		// 공격 액션 후에 일단 _dwActionInput을 9999 로 변경
+		// 나중에 공격이 끝난 후 _dwActionInput를 STAND로 변경할때
+		// 실제로 새로운 입력이 들어왔으면 STAND로 변경하지 않는다.
 		SetActionAttack1();
+		_dwActionInput = 9999;
 	}
 	break;
 	case dfACTION_ATTACK2:
 	{
 		SetActionAttack2();
+		_dwActionInput = 9999;
 	}
 	break;
 	case dfACTION_ATTACK3:
 	{
 		SetActionAttack3();
+		_dwActionInput = 9999;
 	}
 	break;
 	case dfACTION_STAND:
@@ -211,9 +224,6 @@ void CPlayerObject::InputActionProc()
 	}
 	break;
 	}
-
-	//_dwActionInput = dfACTION_STAND;
-	//SetActionStand();
 }
 
 void CPlayerObject::SetActionAttack1(void)
@@ -277,7 +287,7 @@ void CPlayerObject::SetActionMove(DWORD action)
 	// 이동 스프라이트로 새로 바꿔준다.
 	if (!(dfACTION_MOVE_LL <= _dwActionCur && dfACTION_MOVE_LD >= _dwActionCur) || _iDirOld != _iDirCur)
 	{
-		//SetDirection(_iDirCur);
+		SetDirection(_iDirCur);
 
 		if (dfDIR_LEFT == GetDirection())
 		{
