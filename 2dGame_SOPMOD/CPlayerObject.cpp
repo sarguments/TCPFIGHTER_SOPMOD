@@ -5,6 +5,8 @@
 #include "CScreenDib.h"
 #include "CSpriteDib.h"
 
+#include "NetworkProcess.h"
+
 //CPlayerObject::CPlayerObject(CHAR hp)
 //	: _chHP(hp), _bPlayerCharacter(false)
 //{
@@ -30,10 +32,36 @@ bool CPlayerObject::Action(void)
 	NextFrame();
 	ActionProc();
 
-	if (_dwActionOld != _dwActionCur)
-		wcout << _dwActionCur << endl;
-	// TODO : 여기서 보낼까?
-	return false;
+	static bool isAttackPossible = false;
+	int nowAction = GetActionCur();
+	if (nowAction == dfACTION_STAND)
+	{
+		isAttackPossible = true;
+	}
+
+	if (isAttackPossible == false)
+	{
+		return false;
+	}
+
+	// TODO : 액션이 어택인동안 계속 보내는듯 하다.
+	// 공격 동작 시작시 한번만
+
+	if (_dwActionOld != _dwActionCur && _bPlayerCharacter == true)
+	{
+		if (_dwActionCur == dfACTION_ATTACK1 ||
+			_dwActionCur == dfACTION_ATTACK2 ||
+			_dwActionCur == dfACTION_ATTACK3)
+		{
+			isAttackPossible = false;
+		}
+
+		wcout << L"Old : "<< _dwActionOld << L"// Cur : "
+			<< _dwActionCur << endl;
+		SendPacketProc(_dwActionCur);
+	}
+
+	return true;
 }
 
 bool CPlayerObject::Draw(void)
@@ -287,7 +315,8 @@ void CPlayerObject::SetActionMove(DWORD action)
 	// 이동 스프라이트로 새로 바꿔준다.
 	if (!(dfACTION_MOVE_LL <= _dwActionCur && dfACTION_MOVE_LD >= _dwActionCur) || _iDirOld != _iDirCur)
 	{
-		SetDirection(_iDirCur);
+		// TODO : 문제?
+		//SetDirection(_iDirCur);
 
 		if (dfDIR_LEFT == GetDirection())
 		{
@@ -297,9 +326,13 @@ void CPlayerObject::SetActionMove(DWORD action)
 		{
 			SetSprite(ePLAYER_MOVE_R01, ePLAYER_MOVE_R_MAX, dfDELAY_MOVE);
 		}
+
+		wcout << L"Set Action Move" << endl;
 	}
 
-	//wcout << L"Set Action Move" << endl;
+	// TODO : 문제?
+	//_dwActionCur = action;
+	_dwActionOld = _dwActionCur;
 	_dwActionCur = action;
 }
 

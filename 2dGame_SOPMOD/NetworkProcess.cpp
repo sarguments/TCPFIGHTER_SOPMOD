@@ -6,16 +6,173 @@
 #include "RingBuffer_AEK999.h"
 #include "PacketDefine.h"
 #include "CPlayerObject.h"
+#include "CEffectObject.h"
 
 #include "NetworkProcess.h"
 
 int ProcSend(void)
 {
+	if (!g_isConnected)
+	{
+		CCmdStart::CmdDebugText(L"g_isConnected", false);
+		return 0;
+	}
+
+	// sendFlag가 false면 sendQ에 일단 쌓아놓는다
+	if (!g_sendFlag)
+	{
+		CCmdStart::CmdDebugText(L"g_sendFlag", false);
+		return 0;
+	}
+
+	while (1)
+	{
+		// 센드큐에 있는거 다 보낸다
+		int inUseSize = g_sendQ.GetUseSize();
+		if (inUseSize < HEADERSIZE)
+		{
+			break;
+		}
+
+		// 먼저 헤더를 본다
+		st_NETWORK_PACKET_HEADER packetHeader;
+		g_sendQ.Peek((char*)&packetHeader, HEADERSIZE);
+
+		// 길이가 0인 경우
+		if (packetHeader._Size == 0)
+		{
+			return -1;
+		}
+
+		int packetSize = HEADERSIZE + packetHeader._Size + 1;
+
+		// g_recvQ에 헤더사이즈 + 페이로드 + 엔드코드(1) 길이 만큼 있는지
+		if (g_sendQ.GetUseSize() < packetSize)
+		{
+			// 큐에 전체 패킷이 아직 다 못 들어온 경우? (계속 받는다)
+			return 0;
+		}
+
+		// 일단 픽해서 센드하고 센드큐에서 보낸만큼 데이터 날림
+		char localBuf[1000];
+		g_sendQ.Peek((char*)localBuf, packetSize);
+
+		int ret_send = send(g_serverSock, localBuf, packetSize, 0);
+		if (ret_send == SOCKET_ERROR)
+		{
+			if (WSAGetLastError() == WSAEWOULDBLOCK)
+			{
+				// TODO : 우드블럭 테스트
+				// WOULDBLOCK 뜨면 sendFlag = false
+
+				g_sendFlag = false;
+			}
+			else
+			{
+				CCmdStart::CmdDebugText(L"send", false);
+
+				return -1;
+			}
+		}
+
+		//wcout << L"sendQ Use : " << inUseSize << L" / ret_send : " << ret_send << endl;
+		g_sendQ.MoveFrontPos(ret_send);
+	}
+
 	return 0;
 }
 
 int SendPacket(char * buffer, int size)
 {
+	// 일단 넣어보고 리턴값 != size 면 리턴 -1
+	int ret_enqueue = g_sendQ.Enqueue(buffer, size);
+	if (ret_enqueue != size)
+	{
+		CCmdStart::CmdDebugText(L"sendQ enqueue", false);
+		return -1;
+	}
+
+	return ret_enqueue;
+}
+
+int SendPacketProc(int inputParam)
+{
+	switch (inputParam)
+	{
+	case dfACTION_MOVE_LL:
+	{
+		CS_MOVE_START(e_dir::LL);
+		wcout << L"CS_MOVE_START(e_dir::LL);" << endl;
+	}
+	break;
+	case dfACTION_MOVE_LU:
+	{
+		CS_MOVE_START(e_dir::LU);
+		wcout << L"CS_MOVE_START(e_dir::LU);" << endl;
+	}
+	break;
+	case dfACTION_MOVE_UU:
+	{
+		CS_MOVE_START(e_dir::UU);
+		wcout << L"CS_MOVE_START(e_dir::UU);" << endl;
+	}
+	break;
+	case dfACTION_MOVE_RU:
+	{
+		CS_MOVE_START(e_dir::RU);
+		wcout << L"CS_MOVE_START(e_dir::RU);" << endl;
+	}
+	break;
+	case dfACTION_MOVE_RR:
+	{
+		CS_MOVE_START(e_dir::RR);
+		wcout << L"CS_MOVE_START(e_dir::RR);" << endl;
+	}
+	break;
+	case dfACTION_MOVE_RD:
+	{
+		CS_MOVE_START(e_dir::RD);
+		wcout << L"CS_MOVE_START(e_dir::RD);" << endl;
+	}
+	break;
+	case dfACTION_MOVE_DD:
+	{
+		CS_MOVE_START(e_dir::DD);
+		wcout << L"CS_MOVE_START(e_dir::DD);" << endl;
+	}
+	break;
+	case dfACTION_MOVE_LD:
+	{
+		CS_MOVE_START(e_dir::LD);
+		wcout << L"CS_MOVE_START(e_dir::LD);" << endl;
+	}
+	break;
+	case dfACTION_ATTACK1:
+	{
+		CS_ATTACK1();
+		wcout << L"CS_ATTACK1" << endl;
+	}
+	break;
+	case dfACTION_ATTACK2:
+	{
+		CS_ATTACK2();
+		wcout << L"CS_ATTACK2" << endl;
+	}
+	break;
+	case dfACTION_ATTACK3:
+	{
+		CS_ATTACK3();
+		wcout << L"CS_ATTACK3" << endl;
+	}
+	break;
+	case dfACTION_STAND:
+	{
+		CS_MOVE_STOP();
+		wcout << L"CS_MOVE_STOP" << endl;
+	}
+	break;
+	}
+
 	return 0;
 }
 
@@ -127,11 +284,23 @@ int NetworkProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		// 처음 접속했을때 or 송신버퍼가 꽉찼다가 비워졌을때
 		// WSAEWOULDBLOCK
 		g_sendFlag = true;
+
+		int retval = ProcSend();
+		if (retval == -1)
+		{
+			CCmdStart::CmdDebugText(L"ProcSend()", false);
+			return -1;
+		}
 	}
 	break;
 	case FD_READ:
 	{
-		ProcRead();
+		int retval = ProcRead();
+		if (retval == -1)
+		{
+			CCmdStart::CmdDebugText(L"ProcRead()", false);
+			return -1;
+		}
 	}
 	break;
 	case FD_CLOSE:
@@ -161,7 +330,7 @@ int CheckPacket(CRingBuffer * buffer)
 	}
 
 	st_NETWORK_PACKET_HEADER* pLocalHeader = (st_NETWORK_PACKET_HEADER*)peekBuf;
-	if (pLocalHeader->_Code != 0x89)
+	if (pLocalHeader->_Code != dfNETWORK_PACKET_CODE)
 	{
 		return -1;
 	}
@@ -206,7 +375,6 @@ int RecvPacketProc(BYTE type)
 	break;
 	case dfPACKET_SC_ATTACK1:
 	{
-		// TODO : 방향 보정 해야함
 		SC_ATTACK1();
 	}
 	break;
@@ -329,7 +497,7 @@ void SC_MOVE_START(void)
 
 	switch (localBuf._Direction)
 	{
-		// TODO : X, Y 쓰나?
+	// TODO : X, Y 쓰나?
 	case dfACTION_MOVE_LL:
 	{
 		(*iter)->ActionInput(dfACTION_MOVE_LL);
@@ -395,7 +563,11 @@ void SC_MOVE_STOP(void)
 		return;
 	}
 
-	(*iter)->ActionInput(dfACTION_STAND);
+	CPlayerObject* pBaseObj = (CPlayerObject*)(*iter);
+	pBaseObj->SetDirection(localBuf._Direction);
+	pBaseObj->SetPosition(localBuf._X, localBuf._Y);
+	pBaseObj->ActionInput(dfACTION_STAND);
+
 	wcout << L"________SC_MOVE_STOP________" << endl;
 }
 
@@ -421,7 +593,14 @@ void SC_ATTACK1(void)
 		return;
 	}
 
-	(*iter)->ActionInput(dfACTION_ATTACK1);
+	CPlayerObject* pPlayerObj = (CPlayerObject*)(*iter);
+	int dir = pPlayerObj->GetDirection();
+	if (dir != localBuf._Direction)
+	{
+		pPlayerObj->SetDirection(localBuf._Direction);
+	}
+
+	pPlayerObj->ActionInput(dfACTION_ATTACK1);
 }
 
 void SC_ATTACK2(void)
@@ -446,7 +625,14 @@ void SC_ATTACK2(void)
 		return;
 	}
 
-	(*iter)->ActionInput(dfACTION_ATTACK2);
+	CPlayerObject* pPlayerObj = (CPlayerObject*)(*iter);
+	int dir = pPlayerObj->GetDirection();
+	if (dir != localBuf._Direction)
+	{
+		pPlayerObj->SetDirection(localBuf._Direction);
+	}
+
+	pPlayerObj->ActionInput(dfACTION_ATTACK2);
 }
 
 void SC_ATTACK3(void)
@@ -471,12 +657,18 @@ void SC_ATTACK3(void)
 		return;
 	}
 
-	(*iter)->ActionInput(dfACTION_ATTACK3);
+	CPlayerObject* pPlayerObj = (CPlayerObject*)(*iter);
+	int dir = pPlayerObj->GetDirection();
+	if (dir != localBuf._Direction)
+	{
+		pPlayerObj->SetDirection(localBuf._Direction);
+	}
+
+	pPlayerObj->ActionInput(dfACTION_ATTACK3);
 }
 
 void SC_DAMAGE(void)
 {
-	// TODO : 공격자 ID?
 	stPACKET_SC_DAMAGE localBuf;
 	g_recvQ.Dequeue((char*)&localBuf, sizeof(stPACKET_SC_DAMAGE));
 
@@ -497,6 +689,150 @@ void SC_DAMAGE(void)
 		return;
 	}
 
+	// TODO : 이펙트 추가
 	CPlayerObject* pPlayerObj = (CPlayerObject*)(*iter);
 	pPlayerObj->SetHP(localBuf._DamageHP);
+
+	CBaseObject* newEffect = new CEffectObject(localBuf._AttackID);
+	g_ObjectList.push_back(newEffect);
+}
+
+void CS_MOVE_START(e_dir dir)
+{
+	//stPACKET_CS_MOVE_START
+	// TODO : 인큐 예외 처리 해야되나?
+
+	st_NETWORK_PACKET_HEADER localHeader;
+	localHeader._Code = dfNETWORK_PACKET_CODE;
+	localHeader._Size = sizeof(stPACKET_CS_MOVE_START);
+	localHeader._Type = dfPACKET_CS_MOVE_START;
+	SendPacket((char*)&localHeader, sizeof(st_NETWORK_PACKET_HEADER));
+
+	stPACKET_CS_MOVE_START payload;
+	switch (dir)
+	{
+	case e_dir::DD:
+	{
+		payload._Direction = dfACTION_MOVE_DD;
+	}
+	break;
+	case e_dir::LD:
+	{
+		payload._Direction = dfACTION_MOVE_LD;
+	}
+	break;
+	case e_dir::LL:
+	{
+		payload._Direction = dfACTION_MOVE_LL;
+	}
+	break;
+	case e_dir::LU:
+	{
+		payload._Direction = dfACTION_MOVE_LU;
+	}
+	break;
+	case e_dir::RD:
+	{
+		payload._Direction = dfACTION_MOVE_RD;
+	}
+	break;
+	case e_dir::RR:
+	{
+		payload._Direction = dfACTION_MOVE_RR;
+	}
+	break;
+	case e_dir::RU:
+	{
+		payload._Direction = dfACTION_MOVE_RU;
+	}
+	break;
+	case e_dir::UU:
+	{
+		payload._Direction = dfACTION_MOVE_UU;
+	}
+	break;
+	}
+	payload._X = g_pPlayerObject->GetCurX();
+	payload._Y = g_pPlayerObject->GetCurY();
+
+	SendPacket((char*)&payload, sizeof(stPACKET_CS_MOVE_START));
+
+	BYTE endCode = dfNETWORK_PACKET_END;
+	SendPacket((char*)&endCode, sizeof(BYTE));
+}
+
+void CS_MOVE_STOP(void)
+{
+	//stPACKET_CS_MOVE_STOP
+	st_NETWORK_PACKET_HEADER localHeader;
+	localHeader._Code = dfNETWORK_PACKET_CODE;
+	localHeader._Size = sizeof(stPACKET_CS_MOVE_STOP);
+	localHeader._Type = dfPACKET_CS_MOVE_STOP;
+	SendPacket((char*)&localHeader, sizeof(st_NETWORK_PACKET_HEADER));
+
+	stPACKET_CS_MOVE_STOP payload;
+	payload._X = g_pPlayerObject->GetCurX();
+	payload._Y = g_pPlayerObject->GetCurY();
+	payload._Direction = ((CPlayerObject*)g_pPlayerObject)->GetDirection();
+	SendPacket((char*)&payload, sizeof(stPACKET_CS_MOVE_STOP));
+
+	BYTE endCode = dfNETWORK_PACKET_END;
+	SendPacket((char*)&endCode, sizeof(BYTE));
+}
+
+void CS_ATTACK1(void)
+{
+	//stPACKET_CS_ATTACK1
+	st_NETWORK_PACKET_HEADER localHeader;
+	localHeader._Code = dfNETWORK_PACKET_CODE;
+	localHeader._Size = sizeof(stPACKET_CS_ATTACK1);
+	localHeader._Type = dfPACKET_CS_ATTACK1;
+	SendPacket((char*)&localHeader, sizeof(st_NETWORK_PACKET_HEADER));
+
+	stPACKET_CS_ATTACK1 payload;
+	payload._X = g_pPlayerObject->GetCurX();
+	payload._Y = g_pPlayerObject->GetCurY();
+	payload._Direction = ((CPlayerObject*)g_pPlayerObject)->GetDirection();
+	SendPacket((char*)&payload, sizeof(stPACKET_CS_ATTACK1));
+
+	BYTE endCode = dfNETWORK_PACKET_END;
+	SendPacket((char*)&endCode, sizeof(BYTE));
+}
+
+void CS_ATTACK2(void)
+{
+	//stPACKET_CS_ATTACK2
+	st_NETWORK_PACKET_HEADER localHeader;
+	localHeader._Code = dfNETWORK_PACKET_CODE;
+	localHeader._Size = sizeof(stPACKET_CS_ATTACK2);
+	localHeader._Type = dfPACKET_CS_ATTACK2;
+	SendPacket((char*)&localHeader, sizeof(st_NETWORK_PACKET_HEADER));
+
+	stPACKET_CS_ATTACK2 payload;
+	payload._X = g_pPlayerObject->GetCurX();
+	payload._Y = g_pPlayerObject->GetCurY();
+	payload._Direction = ((CPlayerObject*)g_pPlayerObject)->GetDirection();
+	SendPacket((char*)&payload, sizeof(stPACKET_CS_ATTACK2));
+
+	BYTE endCode = dfNETWORK_PACKET_END;
+	SendPacket((char*)&endCode, sizeof(BYTE));
+}
+
+void CS_ATTACK3(void)
+{
+	// stPACKET_CS_ATTACK3
+	st_NETWORK_PACKET_HEADER localHeader;
+	localHeader._Code = dfNETWORK_PACKET_CODE;
+	localHeader._Size = sizeof(stPACKET_CS_ATTACK3);
+	localHeader._Type = dfPACKET_CS_ATTACK3;
+	SendPacket((char*)&localHeader, sizeof(st_NETWORK_PACKET_HEADER));
+
+	stPACKET_CS_ATTACK3 payload;
+	payload._X = g_pPlayerObject->GetCurX();
+	payload._Y = g_pPlayerObject->GetCurY();
+	payload._Direction = ((CPlayerObject*)g_pPlayerObject)->GetDirection();
+	SendPacket((char*)&payload, sizeof(stPACKET_CS_ATTACK3));
+
+	BYTE endCode = dfNETWORK_PACKET_END;
+	SendPacket((char*)&endCode, sizeof(BYTE));
 }

@@ -15,6 +15,23 @@ CEffectObject::CEffectObject(DWORD dwAttackID)
 	: _bEffectStart(false)
 {
 	_dwAttackID = dwAttackID;
+
+	// 일치하는 아이디를 찾고
+	auto iter = std::find_if(g_ObjectList.begin(), g_ObjectList.end(),
+		[=](CBaseObject* param) {
+		if (param->GetObjectType() == e_OBJECT_TYPE::eTYPE_PLAYER &&
+			param->GetObjectID() == _dwAttackID)
+		{
+			return true;
+		}
+		return false;
+	});
+
+	CBaseObject* pPlayerObj = (*iter);
+	int plyaerX = pPlayerObj->GetCurX();
+	int playerY = pPlayerObj->GetCurY();
+	SetPosition(plyaerX, playerY);
+
 	SetObjectType(e_OBJECT_TYPE::eTYPE_EFFECT);
 	SetSprite(eEFFECT_SPARK_01, eEFFECT_SPARK_04, dfDELAY_EFFECT);
 
@@ -59,25 +76,34 @@ bool CEffectObject::Action(void)
 	{
 	case dfACTION_ATTACK1:
 	{
+		wcout << L"dfACTION_ATTACK1" << endl;
+
 		// 해당 공격의 이펙트 시작지점에서(GetSprite) 이펙트를 그린다.
 		if (nowSprite == ePLAYER_ATTACK1_L02 || nowSprite == ePLAYER_ATTACK1_R02)
 		{
+			wcout << L"_bEffectStart = true" << endl;
 			_bEffectStart = true;
 		}
 	}
 	break;
 	case dfACTION_ATTACK2:
 	{
+		wcout << L"dfACTION_ATTACK2" << endl;
+
 		if (nowSprite == ePLAYER_ATTACK2_L02 || nowSprite == ePLAYER_ATTACK2_R02)
 		{
+			wcout << L"_bEffectStart = true" << endl;
 			_bEffectStart = true;
 		}
 	}
 	break;
 	case dfACTION_ATTACK3:
 	{
+		wcout << L"dfACTION_ATTACK3" << endl;
+
 		if (nowSprite == ePLAYER_ATTACK3_L03 || nowSprite == ePLAYER_ATTACK3_R03)
 		{
+			wcout << L"_bEffectStart = true" << endl;
 			_bEffectStart = true;
 		}
 	}
@@ -114,7 +140,7 @@ bool CEffectObject::Draw(void)
 
 	// TODO : 이펙트 그리기
 	pLocalSpDib->DrawSprite(GetSprite(),
-		100 + 20, 100 + 20, bypDest, iDestWidth, iDestHeight, iDestPitch);
+		_iCurX, _iCurY, bypDest, iDestWidth, iDestHeight, iDestPitch);
 
 	return true;
 }

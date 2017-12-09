@@ -14,11 +14,22 @@ extern bool g_sendFlag;
 extern CBaseObject* g_pPlayerObject;
 extern std::list<CBaseObject*> g_ObjectList;
 
+enum class e_dir
+{
+	LL,
+	LU,
+	UU,
+	RU,
+	RR,
+	RD,
+	DD,
+	LD
+};
+
 // SEND //
 int ProcSend(void);
 int SendPacket(char * buffer, int size);
-int SendPacketProc(BYTE type);
-int MakePacket(BYTE type);
+int SendPacketProc(int inputParam);
 
 // RECEV //
 int ProcRead(void);
@@ -33,7 +44,7 @@ int CheckPacket(CRingBuffer* buffer);
 void SC_CREATE_MY_CHARACTER(void);
 void SC_CREATE_OTHER_CHARACTER(void);
 void SC_DELETE_CHARACTER(void);
-void SC_MOVE_START(void);
+void SC_MOVE_START();
 void SC_MOVE_STOP(void);
 void SC_ATTACK1(void);
 void SC_ATTACK2(void);
@@ -41,7 +52,7 @@ void SC_ATTACK3(void);
 void SC_DAMAGE(void);
 
 ////////// CS //////////
-void CS_MOVE_START(void);
+void CS_MOVE_START(e_dir dir);
 void CS_MOVE_STOP(void);
 void CS_ATTACK1(void);
 void CS_ATTACK2(void);

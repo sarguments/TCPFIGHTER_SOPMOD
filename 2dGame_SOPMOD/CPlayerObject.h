@@ -31,7 +31,7 @@ public:
 	void SetHP(CHAR param);
 
 	DWORD GetActionCur(void);
-
+	
 private:
 	void InputActionProc();
 	void SetActionAttack1(void);
