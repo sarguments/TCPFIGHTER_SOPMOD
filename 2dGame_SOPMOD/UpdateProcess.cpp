@@ -104,7 +104,7 @@ void Action(void)
 			delete (*nowIter);
 			nowIter = g_ObjectList.erase(nowIter);
 
-			wcout << L"Object Removed" << endl;
+			wcout << L"######Object Removed" << endl;
 
 			continue;
 		}

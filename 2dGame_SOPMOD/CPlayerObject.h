@@ -44,6 +44,7 @@ public:
 	DWORD _dwActionCur;
 	DWORD _dwActionOld;
 	bool _bPlayerCharacter;
+	bool _isAttackPossible = false;
 
 private:
 	//bool _bPlayerCharacter;

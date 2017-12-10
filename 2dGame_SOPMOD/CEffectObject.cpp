@@ -11,16 +11,16 @@ CEffectObject::CEffectObject()
 	// TODO : 이펙트 생성자
 }
 
-CEffectObject::CEffectObject(DWORD dwAttackID)
+CEffectObject::CEffectObject(DWORD attackID, DWORD damagedID)
 	: _bEffectStart(false)
 {
-	_dwAttackID = dwAttackID;
+	_dwAttackID = attackID;
 
 	// 일치하는 아이디를 찾고
 	auto iter = std::find_if(g_ObjectList.begin(), g_ObjectList.end(),
 		[=](CBaseObject* param) {
 		if (param->GetObjectType() == e_OBJECT_TYPE::eTYPE_PLAYER &&
-			param->GetObjectID() == _dwAttackID)
+			param->GetObjectID() == damagedID)
 		{
 			return true;
 		}
@@ -30,7 +30,7 @@ CEffectObject::CEffectObject(DWORD dwAttackID)
 	CBaseObject* pPlayerObj = (*iter);
 	int plyaerX = pPlayerObj->GetCurX();
 	int playerY = pPlayerObj->GetCurY();
-	SetPosition(plyaerX, playerY);
+	SetPosition(plyaerX, playerY - 40);
 
 	SetObjectType(e_OBJECT_TYPE::eTYPE_EFFECT);
 	SetSprite(eEFFECT_SPARK_01, eEFFECT_SPARK_04, dfDELAY_EFFECT);
@@ -47,7 +47,10 @@ CEffectObject::~CEffectObject()
 bool CEffectObject::Action(void)
 {
 	// 다음 프레임으로
-	NextFrame();
+	if (_bEffectStart)
+	{
+		NextFrame();
+	}
 
 	// 일치하는 아이디를 찾고
 	auto iter = std::find_if(g_ObjectList.begin(), g_ObjectList.end(),
@@ -65,7 +68,7 @@ bool CEffectObject::Action(void)
 		wcout << L"Effect Find FAIL" << endl;
 		return false;
 	}
-	wcout << L"Effect Find : " << (*iter)->GetObjectID() << endl;
+	wcout << L"Effect Find.. ATTACK id: " << _dwAttackID << L" // Effect ID: " << GetObjectID() << endl;
 
 	// 어떤 공격인지 판별해서
 	int curAction = ((CPlayerObject*)(*iter))->GetActionCur();

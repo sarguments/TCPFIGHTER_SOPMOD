@@ -14,7 +14,7 @@ class CEffectObject :
 {
 public:
 	CEffectObject();
-	CEffectObject(DWORD dwAttackID);
+	CEffectObject(DWORD attackID, DWORD damagedID);
 	virtual ~CEffectObject();
 
 	virtual bool Action(void);

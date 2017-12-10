@@ -671,6 +671,9 @@ void SC_DAMAGE(void)
 {
 	stPACKET_SC_DAMAGE localBuf;
 	g_recvQ.Dequeue((char*)&localBuf, sizeof(stPACKET_SC_DAMAGE));
+	
+	// TODO : 테스트용
+	char* pTemp = g_recvQ.GetFrontBufferPtr();
 
 	// 일치하는 아이디를 찾고
 	auto iter = std::find_if(g_ObjectList.begin(), g_ObjectList.end(),
@@ -693,8 +696,11 @@ void SC_DAMAGE(void)
 	CPlayerObject* pPlayerObj = (CPlayerObject*)(*iter);
 	pPlayerObj->SetHP(localBuf._DamageHP);
 
-	CBaseObject* newEffect = new CEffectObject(localBuf._AttackID);
+	// TODO : 생성이 여러개 되네?
+	CBaseObject* newEffect = new CEffectObject(localBuf._AttackID, localBuf._DamageID);
 	g_ObjectList.push_back(newEffect);
+
+	wcout << L"****************New EFFECT" << endl;
 }
 
 void CS_MOVE_START(e_dir dir)

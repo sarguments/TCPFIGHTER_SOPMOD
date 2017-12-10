@@ -32,36 +32,8 @@ bool CPlayerObject::Action(void)
 	NextFrame();
 	ActionProc();
 
-	static bool isAttackPossible = false;
-	int nowAction = GetActionCur();
-	if (nowAction == dfACTION_STAND)
-	{
-		isAttackPossible = true;
-	}
-
-	if (isAttackPossible == false)
-	{
-		return false;
-	}
-
-	// TODO : 액션이 어택인동안 계속 보내는듯 하다.
-	// 공격 동작 시작시 한번만
-
-	if (_dwActionOld != _dwActionCur && _bPlayerCharacter == true)
-	{
-		if (_dwActionCur == dfACTION_ATTACK1 ||
-			_dwActionCur == dfACTION_ATTACK2 ||
-			_dwActionCur == dfACTION_ATTACK3)
-		{
-			isAttackPossible = false;
-		}
-
-		wcout << L"Old : "<< _dwActionOld << L"// Cur : "
-			<< _dwActionCur << endl;
-		SendPacketProc(_dwActionCur);
-	}
-
-	return true;
+	// true면 삭제
+	return false;
 }
 
 bool CPlayerObject::Draw(void)
@@ -113,14 +85,6 @@ void CPlayerObject::ActionProc(void)
 		{
 			// 기본동작으로 돌아감
 			SetActionStand();
-
-			// 입력이 들어온순간 공격이 끝나면 입력을 덮어쓰는 문제
-			// 실제로 새로운 입력이 들어온 경우는 그냥 패스한다.
-			if (_dwActionInput == 9999)
-			{
-				_dwActionInput = dfACTION_STAND;
-				wcout << L"***** action end _dwActionInput = dfACTION_STAND" << endl;
-			}
 		}
 	}
 	break;
@@ -131,6 +95,22 @@ void CPlayerObject::ActionProc(void)
 	}
 	break;
 	}
+
+	if (_dwActionOld == _dwActionCur)
+	{
+		return;
+	}
+
+	wcout << L"Old : " << _dwActionOld << L"// Cur : " << _dwActionCur << endl;
+
+	_dwActionOld = _dwActionCur;
+
+	if (_bPlayerCharacter == false)
+	{
+		return;
+	}
+
+	SendPacketProc(_dwActionCur);
 }
 
 int CPlayerObject::GetDirection(void)
@@ -187,6 +167,7 @@ void CPlayerObject::InputActionProc()
 	case dfACTION_MOVE_UU:
 	{
 		SetPosition(_iCurX, _iCurY - dfSPEED_PLAYER_Y);
+		SetDirection(_iDirCur);
 		SetActionMove(_dwActionInput);
 	}
 	break;
@@ -214,6 +195,7 @@ void CPlayerObject::InputActionProc()
 	case dfACTION_MOVE_DD:
 	{
 		SetPosition(_iCurX, _iCurY + dfSPEED_PLAYER_Y);
+		SetDirection(_iDirCur);
 		SetActionMove(_dwActionInput);
 	}
 	break;
@@ -230,19 +212,19 @@ void CPlayerObject::InputActionProc()
 		// 나중에 공격이 끝난 후 _dwActionInput를 STAND로 변경할때
 		// 실제로 새로운 입력이 들어왔으면 STAND로 변경하지 않는다.
 		SetActionAttack1();
-		_dwActionInput = 9999;
+		_dwActionInput = dfACTION_STAND;
 	}
 	break;
 	case dfACTION_ATTACK2:
 	{
 		SetActionAttack2();
-		_dwActionInput = 9999;
+		_dwActionInput = dfACTION_STAND;
 	}
 	break;
 	case dfACTION_ATTACK3:
 	{
 		SetActionAttack3();
-		_dwActionInput = 9999;
+		_dwActionInput = dfACTION_STAND;
 	}
 	break;
 	case dfACTION_STAND:
