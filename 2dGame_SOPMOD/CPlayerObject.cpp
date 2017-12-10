@@ -297,9 +297,6 @@ void CPlayerObject::SetActionMove(DWORD action)
 	// 이동 스프라이트로 새로 바꿔준다.
 	if (!(dfACTION_MOVE_LL <= _dwActionCur && dfACTION_MOVE_LD >= _dwActionCur) || _iDirOld != _iDirCur)
 	{
-		// TODO : 문제?
-		//SetDirection(_iDirCur);
-
 		if (dfDIR_LEFT == GetDirection())
 		{
 			SetSprite(ePLAYER_MOVE_L01, ePLAYER_MOVE_L_MAX, dfDELAY_MOVE);
@@ -312,8 +309,6 @@ void CPlayerObject::SetActionMove(DWORD action)
 		wcout << L"Set Action Move" << endl;
 	}
 
-	// TODO : 문제?
-	//_dwActionCur = action;
 	_dwActionOld = _dwActionCur;
 	_dwActionCur = action;
 }

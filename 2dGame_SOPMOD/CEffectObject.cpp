@@ -6,11 +6,6 @@
 #include "CScreenDib.h"
 #include "CSpriteDib.h"
 
-CEffectObject::CEffectObject()
-{
-	// TODO : 이펙트 생성자
-}
-
 CEffectObject::CEffectObject(DWORD attackID, DWORD damagedID)
 	: _bEffectStart(false)
 {
@@ -68,12 +63,11 @@ bool CEffectObject::Action(void)
 		wcout << L"Effect Find FAIL" << endl;
 		return false;
 	}
-	wcout << L"Effect Find.. ATTACK id: " << _dwAttackID << L" // Effect ID: " << GetObjectID() << endl;
+	//wcout << L"Effect Find.. ATTACK id: " << _dwAttackID << L" // Effect ID: " << GetObjectID() << endl;
 
 	// 어떤 공격인지 판별해서
 	int curAction = ((CPlayerObject*)(*iter))->GetActionCur();
 	int nowSprite = ((CPlayerObject*)(*iter))->GetSprite();
-	//int playerDir = ((CPlayerObject*)(*iter))->GetDirection();
 
 	switch (curAction)
 	{
@@ -141,7 +135,7 @@ bool CEffectObject::Draw(void)
 		return false;
 	}
 
-	// TODO : 이펙트 그리기
+	// 이펙트 그리기
 	pLocalSpDib->DrawSprite(GetSprite(),
 		_iCurX, _iCurY, bypDest, iDestWidth, iDestHeight, iDestPitch);
 

@@ -1,14 +1,9 @@
 #pragma once
 #include "CBaseObject.h"
 
-//class CScreenDib;
-//class CSpriteDib;
-
 extern class CScreenDib g_ScreenDib;
 extern class CSpriteDib g_SpriteDib;
 
-//extern int g_xPos;
-//extern int g_yPos;
 extern HWND g_hWnd;
 extern std::list<CBaseObject*> g_ObjectList;
 
@@ -31,7 +26,7 @@ public:
 	void SetHP(CHAR param);
 
 	DWORD GetActionCur(void);
-	
+
 private:
 	void InputActionProc();
 	void SetActionAttack1(void);
@@ -47,6 +42,7 @@ public:
 	bool _isAttackPossible = false;
 
 private:
+	// TODO : µð¹ö±ë private
 	//bool _bPlayerCharacter;
 	CHAR _chHP;
 	//DWORD _dwActionCur;

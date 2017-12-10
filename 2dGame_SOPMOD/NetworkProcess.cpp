@@ -322,8 +322,8 @@ int CheckPacket(CRingBuffer * buffer)
 	CRingBuffer* pLocalBuffer = buffer;
 	char peekBuf[100];
 
-	int ret_peek = pLocalBuffer->Peek((char*)peekBuf, HEADERSIZE);
 	// 헤더사이즈만큼 있는지
+	int ret_peek = pLocalBuffer->Peek((char*)peekBuf, HEADERSIZE);
 	if (ret_peek != HEADERSIZE)
 	{
 		return 0;
@@ -497,7 +497,6 @@ void SC_MOVE_START(void)
 
 	switch (localBuf._Direction)
 	{
-	// TODO : X, Y 쓰나?
 	case dfACTION_MOVE_LL:
 	{
 		(*iter)->ActionInput(dfACTION_MOVE_LL);
@@ -671,9 +670,6 @@ void SC_DAMAGE(void)
 {
 	stPACKET_SC_DAMAGE localBuf;
 	g_recvQ.Dequeue((char*)&localBuf, sizeof(stPACKET_SC_DAMAGE));
-	
-	// TODO : 테스트용
-	char* pTemp = g_recvQ.GetFrontBufferPtr();
 
 	// 일치하는 아이디를 찾고
 	auto iter = std::find_if(g_ObjectList.begin(), g_ObjectList.end(),
@@ -692,11 +688,11 @@ void SC_DAMAGE(void)
 		return;
 	}
 
-	// TODO : 이펙트 추가
+	// 데미지 적용
 	CPlayerObject* pPlayerObj = (CPlayerObject*)(*iter);
 	pPlayerObj->SetHP(localBuf._DamageHP);
 
-	// TODO : 생성이 여러개 되네?
+	// 이펙트 추가
 	CBaseObject* newEffect = new CEffectObject(localBuf._AttackID, localBuf._DamageID);
 	g_ObjectList.push_back(newEffect);
 

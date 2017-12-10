@@ -25,10 +25,10 @@ public:
 	void DrawSprite(int iSpriteIndex, int iDrawX, int iDrawY, BYTE* bypDest, int iDestWidth, // iDrawX 는 중점
 		int iDestHeight, int iDestPitch, int iDrawLen = 100);
 
-	void DrawSprite50(int iSpriteIndex, int iDrawX, int iDrawY, BYTE* bypDest, int iDestWidth, // iDrawX 는 중점
+	void DrawSprite50(int iSpriteIndex, int iDrawX, int iDrawY, BYTE* bypDest, int iDestWidth,
 		int iDestHeight, int iDestPitch, int iDrawLen = 100);
 
-	void DrawSpriteRed(int iSpriteIndex, int iDrawX, int iDrawY, BYTE* bypDest, int iDestWidth, // iDrawX 는 중점
+	void DrawSpriteRed(int iSpriteIndex, int iDrawX, int iDrawY, BYTE* bypDest, int iDestWidth,
 		int iDestHeight, int iDestPitch, int iDrawLen = 100);
 
 	// 특정 메모리 위치에 이미지 출력(memset), 클리핑

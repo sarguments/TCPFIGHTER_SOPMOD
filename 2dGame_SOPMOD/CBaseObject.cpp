@@ -79,8 +79,6 @@ void CBaseObject::NextFrame(void)
 		if (_iSpriteNow > _iSpriteMax)
 		{
 			_iSpriteNow = _iSpriteStart;
-
-			// TODO : endFrame 이펙트로 한정해야하나?
 			_bEndFrame = true;
 		}
 	}
