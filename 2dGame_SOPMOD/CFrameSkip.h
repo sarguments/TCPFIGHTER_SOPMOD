@@ -11,11 +11,11 @@ protected:
 	int	_oneFrameTick;
 
 	// FrameSkip() 을 호출하기 전 timeGetTime 으로 얻은 Tick 값.
-	DWORD _systemTick;
+	DWORD _oldTick;
 
-	int	_tick;
+	int	_tickSum;
 	int _tickCount;
-	int _oneSecond;
+	int _lastTime;
 
 public:
 	CFrameSkip(int iMaxFPS);
