@@ -57,7 +57,7 @@ struct st_NETWORK_PACKET_HEADER
 // 자신의 최초 위치, HP 를 받게 된다. (처음에 한번 받게 됨)
 //
 // 이 패킷을 받으면 자신의 ID,X,Y,HP 를 저장하고 캐릭터를 생성시켜야 한다.
-//
+// DWORD id, BYTE dir, WORD x, WORD y, BYTE hp
 //	4	-	ID
 //	1	-	Direction
 //	2	-	X
@@ -82,7 +82,7 @@ struct stPACKET_SC_CREATE_MY_CHARACTER
 //
 // 처음 서버에 접속시 이미 접속되어 있던 캐릭터들의 정보
 // 또는 게임중에 접속된 클라이언트들의 생성 용 정보.
-//
+//  DWORD id, BYTE dir, WORD x, WORD y, BYTE hp
 //
 //	4	-	ID
 //	1	-	Direction
@@ -128,7 +128,7 @@ struct stPACKET_SC_DELETE_CHARACTER
 // 보내줘야 한다.
 //
 // (왼쪽 이동중 위로 이동 / 왼쪽 이동중 왼쪽 위로 이동... 등등)
-//
+// BYTE dir, WORD x, WORD y
 //	1	-	Direction	( 방향 디파인 값 8방향 사용 )
 //	2	-	X
 //	2	-	Y
@@ -188,7 +188,7 @@ struct stPACKET_SC_MOVE_START
 //	1	-	Direction	( 방향 디파인 값 좌/우만 사용 )
 //	2	-	X
 //	2	-	Y
-//
+// BYTE dir, WORD x, WORD y
 //---------------------------------------------------------------
 #pragma pack(push, 1)
 struct stPACKET_CS_MOVE_STOP
@@ -235,7 +235,7 @@ struct stPACKET_SC_MOVE_STOP
 //	1	-	Direction	( 방향 디파인 값. 좌/우만 사용 )
 //	2	-	X
 //	2	-	Y
-//
+// BYTE dir, WORD x, WORD y
 //---------------------------------------------------------------
 #pragma pack(push, 1)
 struct stPACKET_CS_ATTACK1
@@ -252,7 +252,7 @@ struct stPACKET_CS_ATTACK1
 //
 // 패킷 수신시 해당 캐릭터를 찾아서 공격1번 동작으로 액션을 취해준다.
 // 방향이 다를 경우에는 해당 방향으로 바꾼 후 해준다.
-//
+// DWORD id, BYTE dir, WORD x, WORD y
 //	4	-	ID
 //	1	-	Direction	( 방향 디파인 값. 좌/우만 사용 )
 //	2	-	X
@@ -368,7 +368,7 @@ struct stPACKET_SC_ATTACK3
 // 캐릭터 데미지 패킷							Server -> [Client]
 //
 // 공격에 맞은 캐릭터의 정보를 보냄.
-//
+// DWORD AttackID, DWORD DmamgedID, BYTE DamagedHP
 //	4	-	AttackID	( 공격자 ID )
 //	4	-	DamageID	( 피해자 ID )
 //	1	-	DamageHP	( 피해자 HP )

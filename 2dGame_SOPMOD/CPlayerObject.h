@@ -28,7 +28,7 @@ public:
 	DWORD GetActionCur(void);
 
 private:
-	void InputActionProc();
+	bool InputActionProc();
 	void SetActionAttack1(void);
 	void SetActionAttack2(void);
 	void SetActionAttack3(void);

@@ -14,46 +14,44 @@ extern bool g_sendFlag;
 extern CBaseObject* g_pPlayerObject;
 extern std::list<CBaseObject*> g_ObjectList;
 
-enum class e_dir
-{
-	LL,
-	LU,
-	UU,
-	RU,
-	RR,
-	RD,
-	DD,
-	LD
-};
+//enum class e_dir
+//{
+//	LL,
+//	LU,
+//	UU,
+//	RU,
+//	RR,
+//	RD,
+//	DD,
+//	LD
+//};
 
 // SEND //
-int ProcSend(void);
-int SendPacket(char * buffer, int size);
-void SendPacketProc(int inputParam);
+int SendEvent(void);
+bool SendPacket(st_NETWORK_PACKET_HEADER* header, char* packet);
 
 // RECEV //
 int ProcRead(void);
-void RecvPacketProc(BYTE type);
+void RecvPacketProc(BYTE type, char* buf);
 
 // FUNC //
-int NetInit(void);
-int NetworkProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-int CheckPacket(CRingBuffer* buffer);
+bool NetInit(void);
+bool NetworkProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 ////////// SC //////////
-void SC_CREATE_MY_CHARACTER(void);
-void SC_CREATE_OTHER_CHARACTER(void);
-void SC_DELETE_CHARACTER(void);
-void SC_MOVE_START();
-void SC_MOVE_STOP(void);
-void SC_ATTACK1(void);
-void SC_ATTACK2(void);
-void SC_ATTACK3(void);
-void SC_DAMAGE(void);
+void SC_CREATE_MY_CHARACTER(char* packet);
+void SC_CREATE_OTHER_CHARACTER(char* packet);
+void SC_DELETE_CHARACTER(char* packet);
+void SC_MOVE_START(char* packet);
+void SC_MOVE_STOP(char* packet);
+void SC_ATTACK1(char* packet);
+void SC_ATTACK2(char* packet);
+void SC_ATTACK3(char* packet);
+void SC_DAMAGE(char* packet);
 
 ////////// CS //////////
-void CS_MOVE_START(e_dir dir);
-void CS_MOVE_STOP(void);
-void CS_ATTACK1(void);
-void CS_ATTACK2(void);
-void CS_ATTACK3(void);
+void CS_MOVE_START(st_NETWORK_PACKET_HEADER* header, stPACKET_CS_MOVE_START* packet, BYTE dir, WORD x, WORD y);
+void CS_MOVE_STOP(st_NETWORK_PACKET_HEADER* header, stPACKET_CS_MOVE_STOP* packet, BYTE dir, WORD x, WORD y);
+void CS_ATTACK1(st_NETWORK_PACKET_HEADER* header, stPACKET_CS_ATTACK1* packet, BYTE dir, WORD x, WORD y);
+void CS_ATTACK2(st_NETWORK_PACKET_HEADER* header, stPACKET_CS_ATTACK2* packet, BYTE dir, WORD x, WORD y);
+void CS_ATTACK3(st_NETWORK_PACKET_HEADER* header, stPACKET_CS_ATTACK3* packet, BYTE dir, WORD x, WORD y);
