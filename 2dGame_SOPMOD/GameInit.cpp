@@ -12,14 +12,6 @@
 
 bool GameInit(void)
 {
-	//g_SpriteDib.LoadDibSprite(0, L"SpriteData\\_Map.bmp", 0, 0);
-	//g_SpriteDib.LoadDibSprite(1, L"SpriteData\\Attack1_L_01.bmp", 71, 90);
-	//g_SpriteDib.LoadDibSprite(1, L"SpriteData\\Attack1_L_02.bmp", 71, 90);
-	//g_SpriteDib.LoadDibSprite(1, L"SpriteData\\Attack1_L_03.bmp", 71, 90);
-	//g_SpriteDib.LoadDibSprite(1, L"SpriteData\\Attack1_L_04.bmp", 71, 90);
-
-	//
-
 	if (!g_SpriteDib.LoadDibSprite(eMAP, L"Data\\_Map.bmp", 0, 0))
 		return false;
 	if (!g_SpriteDib.LoadDibSprite(ePLAYER_STAND_L01, L"Data\\Stand_L_01.bmp", 71, 90))
@@ -170,47 +162,6 @@ bool GameInit(void)
 
 	if (!g_SpriteDib.LoadDibSprite(eSHADOW, L"Data\\Shadow.bmp", 32, 4))
 		return false;
-
-	// CBaseObject* g_pPlayerObject;
-	// 여기서 일단 테스트용 객체들 생성
-
-	/*
-	static int playerNum = 1;
-
-	std::list<CBaseObject*>* pLocalList = &g_ObjectList;
-
-	g_pPlayerObject = new CPlayerObject(true);
-	g_pPlayerObject->SetPosition(100, 100);
-	g_pPlayerObject->SetObjectID(playerNum);
-	++playerNum;
-	g_pPlayerObject->SetObjectType(e_OBJECT_TYPE::eTYPE_PLAYER);
-	g_pPlayerObject->SetSprite(e_SPRITE::ePLAYER_STAND_L01, e_SPRITE::ePLAYER_STAND_L_MAX, dfDELAY_STAND);
-	pLocalList->push_back(g_pPlayerObject);
-
-	CBaseObject* pTestObject = new CPlayerObject();
-	pTestObject->SetPosition(100, 250);
-	pTestObject->SetObjectID(playerNum);
-	++playerNum;
-	pTestObject->SetObjectType(e_OBJECT_TYPE::eTYPE_PLAYER);
-	pTestObject->SetSprite(e_SPRITE::ePLAYER_STAND_L01, e_SPRITE::ePLAYER_STAND_L_MAX, dfDELAY_STAND);
-	pLocalList->push_back(pTestObject);
-
-	CBaseObject* pTestObject2 = new CPlayerObject();
-	pTestObject2->SetPosition(100, 200);
-	pTestObject2->SetObjectID(playerNum);
-	++playerNum;
-	pTestObject2->SetObjectType(e_OBJECT_TYPE::eTYPE_PLAYER);
-	pTestObject2->SetSprite(e_SPRITE::ePLAYER_STAND_L01, e_SPRITE::ePLAYER_STAND_L_MAX, dfDELAY_STAND);
-	pLocalList->push_back(pTestObject2);
-
-	CBaseObject* pTestObject3 = new CPlayerObject();
-	pTestObject3->SetPosition(100, 150);
-	pTestObject3->SetObjectID(playerNum);
-	++playerNum;
-	pTestObject3->SetObjectType(e_OBJECT_TYPE::eTYPE_PLAYER);
-	pTestObject3->SetSprite(e_SPRITE::ePLAYER_STAND_L01, e_SPRITE::ePLAYER_STAND_L_MAX, dfDELAY_STAND);
-	pLocalList->push_back(pTestObject3);
-	*/
 
 	return true;
 }

@@ -29,11 +29,11 @@ enum class e_dir
 // SEND //
 int ProcSend(void);
 int SendPacket(char * buffer, int size);
-int SendPacketProc(int inputParam);
+void SendPacketProc(int inputParam);
 
 // RECEV //
 int ProcRead(void);
-int RecvPacketProc(BYTE type);
+void RecvPacketProc(BYTE type);
 
 // FUNC //
 int NetInit(void);

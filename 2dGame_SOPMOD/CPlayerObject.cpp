@@ -7,17 +7,9 @@
 
 #include "NetworkProcess.h"
 
-//CPlayerObject::CPlayerObject(CHAR hp)
-//	: _chHP(hp), _bPlayerCharacter(false)
-//{
-//	SetDirection(dfDIR_LEFT);
-//	SetObjectType(e_OBJECT_TYPE::eTYPE_PLAYER);
-//}
-
 CPlayerObject::CPlayerObject(CHAR hp, bool bPlayer, int dir)
 	: _chHP(hp), _bPlayerCharacter(bPlayer)
 {
-	//_iDirOld = dir;
 	SetDirection(dir);
 	SetObjectType(e_OBJECT_TYPE::eTYPE_PLAYER);
 }

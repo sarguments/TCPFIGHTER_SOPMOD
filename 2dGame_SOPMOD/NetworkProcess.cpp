@@ -95,7 +95,7 @@ int SendPacket(char * buffer, int size)
 	return ret_enqueue;
 }
 
-int SendPacketProc(int inputParam)
+void SendPacketProc(int inputParam)
 {
 	switch (inputParam)
 	{
@@ -172,8 +172,6 @@ int SendPacketProc(int inputParam)
 	}
 	break;
 	}
-
-	return 0;
 }
 
 int ProcRead(void)
@@ -344,7 +342,7 @@ int CheckPacket(CRingBuffer * buffer)
 	return 0;
 }
 
-int RecvPacketProc(BYTE type)
+void RecvPacketProc(BYTE type)
 {
 	switch (type)
 	{
@@ -394,8 +392,6 @@ int RecvPacketProc(BYTE type)
 	}
 	break;
 	}
-
-	return 0;
 }
 
 void SC_CREATE_MY_CHARACTER(void)
