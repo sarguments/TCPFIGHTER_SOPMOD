@@ -14,18 +14,6 @@ extern bool g_sendFlag;
 extern CBaseObject* g_pPlayerObject;
 extern std::list<CBaseObject*> g_ObjectList;
 
-//enum class e_dir
-//{
-//	LL,
-//	LU,
-//	UU,
-//	RU,
-//	RR,
-//	RD,
-//	DD,
-//	LD
-//};
-
 // SEND //
 int SendEvent(void);
 bool SendPacket(st_NETWORK_PACKET_HEADER* header, char* packet);
