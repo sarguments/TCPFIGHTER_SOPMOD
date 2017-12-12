@@ -354,7 +354,7 @@ bool CPlayerObject::InputActionProc()
 		}
 
 		if (_dwActionOld >= dfACTION_MOVE_LL && _dwActionOld <= dfACTION_MOVE_LD)
-		{ 
+		{
 			st_NETWORK_PACKET_HEADER tempHeader;
 			stPACKET_CS_MOVE_STOP tempPacket;
 
@@ -364,7 +364,7 @@ bool CPlayerObject::InputActionProc()
 				return false;
 			}
 		}
-		
+
 		st_NETWORK_PACKET_HEADER header;
 		stPACKET_CS_ATTACK1 packet;
 		CS_ATTACK1(&header, &packet, GetDirection(), GetCurX(), GetCurY());
