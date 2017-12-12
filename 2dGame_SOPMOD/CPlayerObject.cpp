@@ -353,15 +353,18 @@ bool CPlayerObject::InputActionProc()
 			break;
 		}
 
-		st_NETWORK_PACKET_HEADER tempHeader;
-		stPACKET_CS_MOVE_STOP tempPacket;
+		if (_dwActionOld >= dfACTION_MOVE_LL && _dwActionOld <= dfACTION_MOVE_LD)
+		{ 
+			st_NETWORK_PACKET_HEADER tempHeader;
+			stPACKET_CS_MOVE_STOP tempPacket;
 
-		CS_MOVE_STOP(&tempHeader, &tempPacket, GetDirection(), GetCurX(), GetCurY());
-		if (!SendPacket(&tempHeader, (char*)&tempPacket))
-		{
-			return false;
+			CS_MOVE_STOP(&tempHeader, &tempPacket, GetDirection(), GetCurX(), GetCurY());
+			if (!SendPacket(&tempHeader, (char*)&tempPacket))
+			{
+				return false;
+			}
 		}
-
+		
 		st_NETWORK_PACKET_HEADER header;
 		stPACKET_CS_ATTACK1 packet;
 		CS_ATTACK1(&header, &packet, GetDirection(), GetCurX(), GetCurY());
@@ -381,13 +384,17 @@ bool CPlayerObject::InputActionProc()
 			break;
 		}
 
-		st_NETWORK_PACKET_HEADER tempHeader;
-		stPACKET_CS_MOVE_STOP tempPacket;
-
-		CS_MOVE_STOP(&tempHeader, &tempPacket, GetDirection(), GetCurX(), GetCurY());
-		if (!SendPacket(&tempHeader, (char*)&tempPacket))
+		int nowSprite = GetSprite();
+		if (_dwActionOld >= dfACTION_MOVE_LL && _dwActionOld <= dfACTION_MOVE_LD)
 		{
-			return false;
+			st_NETWORK_PACKET_HEADER tempHeader;
+			stPACKET_CS_MOVE_STOP tempPacket;
+
+			CS_MOVE_STOP(&tempHeader, &tempPacket, GetDirection(), GetCurX(), GetCurY());
+			if (!SendPacket(&tempHeader, (char*)&tempPacket))
+			{
+				return false;
+			}
 		}
 
 		st_NETWORK_PACKET_HEADER header;
@@ -410,13 +417,17 @@ bool CPlayerObject::InputActionProc()
 			break;
 		}
 
-		st_NETWORK_PACKET_HEADER tempHeader;
-		stPACKET_CS_MOVE_STOP tempPacket;
-
-		CS_MOVE_STOP(&tempHeader, &tempPacket, GetDirection(), GetCurX(), GetCurY());
-		if (!SendPacket(&tempHeader, (char*)&tempPacket))
+		int nowSprite = GetSprite();
+		if (_dwActionOld >= dfACTION_MOVE_LL && _dwActionOld <= dfACTION_MOVE_LD)
 		{
-			return false;
+			st_NETWORK_PACKET_HEADER tempHeader;
+			stPACKET_CS_MOVE_STOP tempPacket;
+
+			CS_MOVE_STOP(&tempHeader, &tempPacket, GetDirection(), GetCurX(), GetCurY());
+			if (!SendPacket(&tempHeader, (char*)&tempPacket))
+			{
+				return false;
+			}
 		}
 
 		st_NETWORK_PACKET_HEADER header;
