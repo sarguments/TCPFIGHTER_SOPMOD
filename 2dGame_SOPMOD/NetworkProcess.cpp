@@ -10,8 +10,6 @@
 
 #include "NetworkProcess.h"
 
-extern CRingBuffer g_recvQ;
-
 int SendEvent(void)
 {
 	// sendFlag가 false면 sendQ에 일단 쌓아놓는다
@@ -34,9 +32,14 @@ int SendEvent(void)
 
 		// 일단 픽해서 센드하고 센드큐에서 보낸만큼 데이터 날림
 		char localBuf[1000];
-		g_sendQ.Peek((char*)localBuf, UseSize);
+		int ret_peek = g_sendQ.Peek((char*)localBuf, UseSize);
+		if (ret_peek != UseSize)
+		{
+			CCmdStart::CmdDebugText(L"peek()", false);
+			return -1;
+		}
 
-		int ret_send = send(g_serverSock, localBuf, UseSize, 0);
+		int ret_send = send(g_serverSock, localBuf, ret_peek, 0);
 		if (ret_send == SOCKET_ERROR)
 		{
 			if (WSAGetLastError() == WSAEWOULDBLOCK)
@@ -84,8 +87,8 @@ bool SendPacket(st_NETWORK_PACKET_HEADER * header, char * packet)
 		CCmdStart::CmdDebugText(L"sendQ enqueue", false);
 		return false;
 	}
-		
-	BYTE endCode = 0x79;
+
+	BYTE endCode = dfNETWORK_PACKET_END;
 	ret_enqueue = g_sendQ.Enqueue((char*)&endCode, sizeof(BYTE));
 	if (ret_enqueue != sizeof(BYTE))
 	{
@@ -126,16 +129,17 @@ int ProcRead(void)
 
 	while (1)
 	{
+		char tempHeaderBuf[1000];
 		char tempBuf[1000];
 
 		// 헤더사이즈만큼 있는지
-		int ret_peek = g_recvQ.Peek((char*)tempBuf, HEADERSIZE);
+		int ret_peek = g_recvQ.Peek((char*)tempHeaderBuf, HEADERSIZE);
 		if (ret_peek != HEADERSIZE)
 		{
 			return 0;
 		}
 
-		st_NETWORK_PACKET_HEADER* pLocalHeader = (st_NETWORK_PACKET_HEADER*)tempBuf;
+		st_NETWORK_PACKET_HEADER* pLocalHeader = (st_NETWORK_PACKET_HEADER*)tempHeaderBuf;
 		if (pLocalHeader->_Code != dfNETWORK_PACKET_CODE)
 		{
 			return -1;
@@ -151,7 +155,12 @@ int ProcRead(void)
 		g_recvQ.MoveFrontPos(HEADERSIZE);
 
 		// 페이로드 크기 만큼 디큐
-		g_recvQ.Dequeue((char*)tempBuf, pLocalHeader->_Size);
+		int ret_dequeue = g_recvQ.Dequeue((char*)tempBuf, pLocalHeader->_Size);
+		if (ret_dequeue != pLocalHeader->_Size)
+		{
+			CCmdStart::CmdDebugText(L"Dequeue()", false);
+			return -1;
+		}
 
 		// 안쓰는 엔드코드 만큼 front 이동
 		g_recvQ.MoveFrontPos(1);
@@ -299,6 +308,11 @@ void RecvPacketProc(BYTE type, char* packet)
 		SC_DAMAGE(packet);
 	}
 	break;
+	default:
+	{
+		CCmdStart::CmdDebugText(L"Fatal ERROR!!!!", false);
+		return;
+	}
 	}
 }
 
@@ -565,7 +579,6 @@ void SC_ATTACK3(char* packet)
 void SC_DAMAGE(char* packet)
 {
 	stPACKET_SC_DAMAGE* localBuf = (stPACKET_SC_DAMAGE*)packet;
-	g_recvQ.Dequeue((char*)&localBuf, sizeof(stPACKET_SC_DAMAGE));
 
 	// 일치하는 아이디를 찾고
 	auto iter = std::find_if(g_ObjectList.begin(), g_ObjectList.end(),
@@ -601,52 +614,9 @@ void CS_MOVE_START(st_NETWORK_PACKET_HEADER * header, stPACKET_CS_MOVE_START * p
 	header->_Size = sizeof(stPACKET_CS_MOVE_START);
 	header->_Type = dfPACKET_CS_MOVE_START;
 
-	switch (dir)
-	{
-	case dfACTION_MOVE_DD:
-	{
-		packet->_Direction = dfACTION_MOVE_DD;
-	}
-	break;
-	case dfACTION_MOVE_LD:
-	{
-		packet->_Direction = dfACTION_MOVE_LD;
-	}
-	break;
-	case dfACTION_MOVE_LL:
-	{
-		packet->_Direction = dfACTION_MOVE_LL;
-	}
-	break;
-	case dfACTION_MOVE_LU:
-	{
-		packet->_Direction = dfACTION_MOVE_LU;
-	}
-	break;
-	case dfACTION_MOVE_RD:
-	{
-		packet->_Direction = dfACTION_MOVE_RD;
-	}
-	break;
-	case dfACTION_MOVE_RR:
-	{
-		packet->_Direction = dfACTION_MOVE_RR;
-	}
-	break;
-	case dfACTION_MOVE_RU:
-	{
-		packet->_Direction = dfACTION_MOVE_RU;
-	}
-	break;
-	case dfACTION_MOVE_UU:
-	{
-		packet->_Direction = dfACTION_MOVE_UU;
-	}
-	break;
-	}
-
-	packet->_X = g_pPlayerObject->GetCurX();
-	packet->_Y = g_pPlayerObject->GetCurY();
+	packet->_X = x;
+	packet->_Y = y;
+	packet->_Direction = dir;
 }
 
 void CS_MOVE_STOP(st_NETWORK_PACKET_HEADER * header, stPACKET_CS_MOVE_STOP * packet, BYTE dir, WORD x, WORD y)
@@ -677,9 +647,9 @@ void CS_ATTACK2(st_NETWORK_PACKET_HEADER * header, stPACKET_CS_ATTACK2 * packet,
 	header->_Size = sizeof(stPACKET_CS_ATTACK2);
 	header->_Type = dfPACKET_CS_ATTACK2;
 
-	packet->_X = g_pPlayerObject->GetCurX();
-	packet->_Y = g_pPlayerObject->GetCurY();
-	packet->_Direction = ((CPlayerObject*)g_pPlayerObject)->GetDirection();
+	packet->_X = x;
+	packet->_Y = y;
+	packet->_Direction = dir;
 }
 
 void CS_ATTACK3(st_NETWORK_PACKET_HEADER * header, stPACKET_CS_ATTACK3 * packet, BYTE dir, WORD x, WORD y)

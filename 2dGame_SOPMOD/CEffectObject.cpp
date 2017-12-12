@@ -60,8 +60,9 @@ bool CEffectObject::Action(void)
 
 	if (iter == g_ObjectList.end())
 	{
+		// TODO : 일단 못찾으면 삭제
 		wcout << L"Effect Find FAIL" << endl;
-		return false;
+		return true;
 	}
 	//wcout << L"Effect Find.. ATTACK id: " << _dwAttackID << L" // Effect ID: " << GetObjectID() << endl;
 

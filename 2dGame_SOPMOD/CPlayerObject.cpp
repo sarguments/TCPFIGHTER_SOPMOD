@@ -153,6 +153,11 @@ bool CPlayerObject::InputActionProc()
 			break;
 		}
 
+		if (!_bPlayerCharacter)
+		{
+			break;
+		}
+
 		st_NETWORK_PACKET_HEADER header;
 		stPACKET_CS_MOVE_START packet;
 
@@ -169,6 +174,11 @@ bool CPlayerObject::InputActionProc()
 		SetDirection(dfDIR_LEFT);
 		SetActionMove(_dwActionInput);
 		if (_dwActionCur == _dwActionOld)
+		{
+			break;
+		}
+
+		if (!_bPlayerCharacter)
 		{
 			break;
 		}
@@ -193,6 +203,11 @@ bool CPlayerObject::InputActionProc()
 			break;
 		}
 
+		if (!_bPlayerCharacter)
+		{
+			break;
+		}
+
 		st_NETWORK_PACKET_HEADER header;
 		stPACKET_CS_MOVE_START packet;
 
@@ -209,6 +224,11 @@ bool CPlayerObject::InputActionProc()
 		SetDirection(dfDIR_RIGHT);
 		SetActionMove(_dwActionInput);
 		if (_dwActionCur == _dwActionOld)
+		{
+			break;
+		}
+
+		if (!_bPlayerCharacter)
 		{
 			break;
 		}
@@ -233,6 +253,11 @@ bool CPlayerObject::InputActionProc()
 			break;
 		}
 
+		if (!_bPlayerCharacter)
+		{
+			break;
+		}
+
 		st_NETWORK_PACKET_HEADER header;
 		stPACKET_CS_MOVE_START packet;
 
@@ -249,6 +274,11 @@ bool CPlayerObject::InputActionProc()
 		SetDirection(dfDIR_RIGHT);
 		SetActionMove(_dwActionInput);
 		if (_dwActionCur == _dwActionOld)
+		{
+			break;
+		}
+
+		if (!_bPlayerCharacter)
 		{
 			break;
 		}
@@ -273,6 +303,11 @@ bool CPlayerObject::InputActionProc()
 			break;
 		}
 
+		if (!_bPlayerCharacter)
+		{
+			break;
+		}
+
 		st_NETWORK_PACKET_HEADER header;
 		stPACKET_CS_MOVE_START packet;
 
@@ -293,6 +328,11 @@ bool CPlayerObject::InputActionProc()
 			break;
 		}
 
+		if (!_bPlayerCharacter)
+		{
+			break;
+		}
+
 		st_NETWORK_PACKET_HEADER header;
 		stPACKET_CS_MOVE_START packet;
 
@@ -305,7 +345,13 @@ bool CPlayerObject::InputActionProc()
 	break;
 	case dfACTION_ATTACK1:
 	{
+		SetActionAttack1();
 		_dwActionInput = dfACTION_STAND;
+
+		if (!_bPlayerCharacter)
+		{
+			break;
+		}
 
 		st_NETWORK_PACKET_HEADER tempHeader;
 		stPACKET_CS_MOVE_STOP tempPacket;
@@ -315,8 +361,6 @@ bool CPlayerObject::InputActionProc()
 		{
 			return false;
 		}
-
-		SetActionAttack1();
 
 		st_NETWORK_PACKET_HEADER header;
 		stPACKET_CS_ATTACK1 packet;
@@ -329,7 +373,13 @@ bool CPlayerObject::InputActionProc()
 	break;
 	case dfACTION_ATTACK2:
 	{
+		SetActionAttack2();
 		_dwActionInput = dfACTION_STAND;
+
+		if (!_bPlayerCharacter)
+		{
+			break;
+		}
 
 		st_NETWORK_PACKET_HEADER tempHeader;
 		stPACKET_CS_MOVE_STOP tempPacket;
@@ -339,9 +389,7 @@ bool CPlayerObject::InputActionProc()
 		{
 			return false;
 		}
-		
-		SetActionAttack2();
-		
+
 		st_NETWORK_PACKET_HEADER header;
 		stPACKET_CS_ATTACK2 packet;
 
@@ -354,7 +402,13 @@ bool CPlayerObject::InputActionProc()
 	break;
 	case dfACTION_ATTACK3:
 	{
+		SetActionAttack3();
 		_dwActionInput = dfACTION_STAND;
+
+		if (!_bPlayerCharacter)
+		{
+			break;
+		}
 
 		st_NETWORK_PACKET_HEADER tempHeader;
 		stPACKET_CS_MOVE_STOP tempPacket;
@@ -365,11 +419,9 @@ bool CPlayerObject::InputActionProc()
 			return false;
 		}
 
-		SetActionAttack3();
-
 		st_NETWORK_PACKET_HEADER header;
 		stPACKET_CS_ATTACK3 packet;
-		
+
 		CS_ATTACK3(&header, &packet, GetDirection(), GetCurX(), GetCurY());
 		if (!SendPacket(&header, (char*)&packet))
 		{
@@ -389,6 +441,11 @@ bool CPlayerObject::InputActionProc()
 
 		// 기본 입력은 스탠드이다.
 		SetActionStand();
+
+		if (!_bPlayerCharacter)
+		{
+			break;
+		}
 
 		st_NETWORK_PACKET_HEADER header;
 		stPACKET_CS_MOVE_STOP packet;
