@@ -54,7 +54,7 @@ bool CFrameSkip::FrameSkip()
 			Sleep(_oneFrameTick - _tickSum);
 
 			nowTic = timeGetTime(); // 슬립한 후 현재시간 다시 넣어준다
-								    // 빠른 만큼 슬립 했으니까 20 넣어준다(나중에 무조건 20 뺄것임)
+									// 빠른 만큼 슬립 했으니까 20 넣어준다(나중에 무조건 20 뺄것임)
 			_tickSum = _oneFrameTick;
 
 			byReturnFlag = true;

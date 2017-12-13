@@ -10,6 +10,8 @@
 #include "CPlayerObject.h"
 #include "CEffectObject.h"
 
+#include "NetworkProcess.h"
+
 void KeyProcess(void)
 {
 	// ³Î Ã¼Å©
@@ -111,6 +113,8 @@ void Action(void)
 
 		nowIter++;
 	}
+
+	SendEvent();
 }
 
 void Draw(void)

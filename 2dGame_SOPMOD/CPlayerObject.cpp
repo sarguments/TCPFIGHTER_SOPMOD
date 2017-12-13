@@ -10,6 +10,9 @@
 CPlayerObject::CPlayerObject(CHAR hp, bool bPlayer, int dir)
 	: _chHP(hp), _bPlayerCharacter(bPlayer)
 {
+	// 지정 안할 경우 첫 접속때 위아래 이동 문제생김
+	_dwActionCur = dfACTION_STAND;
+
 	SetDirection(dir);
 	SetObjectType(e_OBJECT_TYPE::eTYPE_PLAYER);
 }
@@ -76,6 +79,9 @@ void CPlayerObject::ActionProc(void)
 		if (isEndFrame())
 		{
 			// 기본동작으로 돌아감
+			_dwActionOld = _dwActionCur;
+			_dwActionCur = dfACTION_STAND;
+
 			SetActionStand();
 		}
 	}
@@ -93,7 +99,7 @@ void CPlayerObject::ActionProc(void)
 		return;
 	}
 
-	wcout << L"Old : " << _dwActionOld << L"// Cur : " << _dwActionCur << endl;
+	//wcout << L"Old : " << _dwActionOld << L"// Cur : " << _dwActionCur << endl;
 
 	_dwActionOld = _dwActionCur;
 
@@ -101,8 +107,6 @@ void CPlayerObject::ActionProc(void)
 	{
 		return;
 	}
-
-	SendPacketProc(_dwActionCur);
 }
 
 int CPlayerObject::GetDirection(void)
@@ -138,7 +142,7 @@ DWORD CPlayerObject::GetActionCur(void)
 }
 
 // 입력 처리
-void CPlayerObject::InputActionProc()
+bool CPlayerObject::InputActionProc()
 {
 	switch (_dwActionInput)
 	{
@@ -147,6 +151,24 @@ void CPlayerObject::InputActionProc()
 		SetPosition(_iCurX - dfSPEED_PLAYER_X, _iCurY);
 		SetDirection(dfDIR_LEFT);
 		SetActionMove(_dwActionInput);
+		if (_dwActionCur == _dwActionOld)
+		{
+			break;
+		}
+
+		if (!_bPlayerCharacter)
+		{
+			break;
+		}
+
+		st_NETWORK_PACKET_HEADER header;
+		stPACKET_CS_MOVE_START packet;
+
+		CS_MOVE_START(&header, &packet, dfACTION_MOVE_LL, GetCurX(), GetCurY());
+		if (!SendPacket(&header, (char*)&packet))
+		{
+			return false;
+		}
 	}
 	break;
 	case dfACTION_MOVE_LU:
@@ -154,6 +176,24 @@ void CPlayerObject::InputActionProc()
 		SetPosition(_iCurX - dfSPEED_PLAYER_X, _iCurY - dfSPEED_PLAYER_Y);
 		SetDirection(dfDIR_LEFT);
 		SetActionMove(_dwActionInput);
+		if (_dwActionCur == _dwActionOld)
+		{
+			break;
+		}
+
+		if (!_bPlayerCharacter)
+		{
+			break;
+		}
+
+		st_NETWORK_PACKET_HEADER header;
+		stPACKET_CS_MOVE_START packet;
+
+		CS_MOVE_START(&header, &packet, dfACTION_MOVE_LU, GetCurX(), GetCurY());
+		if (!SendPacket(&header, (char*)&packet))
+		{
+			return false;
+		}
 	}
 	break;
 	case dfACTION_MOVE_UU:
@@ -161,6 +201,24 @@ void CPlayerObject::InputActionProc()
 		SetPosition(_iCurX, _iCurY - dfSPEED_PLAYER_Y);
 		SetDirection(_iDirCur);
 		SetActionMove(_dwActionInput);
+		if (_dwActionCur == _dwActionOld)
+		{
+			break;
+		}
+
+		if (!_bPlayerCharacter)
+		{
+			break;
+		}
+
+		st_NETWORK_PACKET_HEADER header;
+		stPACKET_CS_MOVE_START packet;
+
+		CS_MOVE_START(&header, &packet, dfACTION_MOVE_UU, GetCurX(), GetCurY());
+		if (!SendPacket(&header, (char*)&packet))
+		{
+			return false;
+		}
 	}
 	break;
 	case dfACTION_MOVE_RU:
@@ -168,6 +226,24 @@ void CPlayerObject::InputActionProc()
 		SetPosition(_iCurX + dfSPEED_PLAYER_X, _iCurY - dfSPEED_PLAYER_Y);
 		SetDirection(dfDIR_RIGHT);
 		SetActionMove(_dwActionInput);
+		if (_dwActionCur == _dwActionOld)
+		{
+			break;
+		}
+
+		if (!_bPlayerCharacter)
+		{
+			break;
+		}
+
+		st_NETWORK_PACKET_HEADER header;
+		stPACKET_CS_MOVE_START packet;
+
+		CS_MOVE_START(&header, &packet, dfACTION_MOVE_RU, GetCurX(), GetCurY());
+		if (!SendPacket(&header, (char*)&packet))
+		{
+			return false;
+		}
 	}
 	break;
 	case dfACTION_MOVE_RR:
@@ -175,6 +251,24 @@ void CPlayerObject::InputActionProc()
 		SetPosition(_iCurX + dfSPEED_PLAYER_X, _iCurY);
 		SetDirection(dfDIR_RIGHT);
 		SetActionMove(_dwActionInput);
+		if (_dwActionCur == _dwActionOld)
+		{
+			break;
+		}
+
+		if (!_bPlayerCharacter)
+		{
+			break;
+		}
+
+		st_NETWORK_PACKET_HEADER header;
+		stPACKET_CS_MOVE_START packet;
+
+		CS_MOVE_START(&header, &packet, dfACTION_MOVE_RR, GetCurX(), GetCurY());
+		if (!SendPacket(&header, (char*)&packet))
+		{
+			return false;
+		}
 	}
 	break;
 	case dfACTION_MOVE_RD:
@@ -182,6 +276,24 @@ void CPlayerObject::InputActionProc()
 		SetPosition(_iCurX + dfSPEED_PLAYER_X, _iCurY + dfSPEED_PLAYER_Y);
 		SetDirection(dfDIR_RIGHT);
 		SetActionMove(_dwActionInput);
+		if (_dwActionCur == _dwActionOld)
+		{
+			break;
+		}
+
+		if (!_bPlayerCharacter)
+		{
+			break;
+		}
+
+		st_NETWORK_PACKET_HEADER header;
+		stPACKET_CS_MOVE_START packet;
+
+		CS_MOVE_START(&header, &packet, dfACTION_MOVE_RD, GetCurX(), GetCurY());
+		if (!SendPacket(&header, (char*)&packet))
+		{
+			return false;
+		}
 	}
 	break;
 	case dfACTION_MOVE_DD:
@@ -189,6 +301,24 @@ void CPlayerObject::InputActionProc()
 		SetPosition(_iCurX, _iCurY + dfSPEED_PLAYER_Y);
 		SetDirection(_iDirCur);
 		SetActionMove(_dwActionInput);
+		if (_dwActionCur == _dwActionOld)
+		{
+			break;
+		}
+
+		if (!_bPlayerCharacter)
+		{
+			break;
+		}
+
+		st_NETWORK_PACKET_HEADER header;
+		stPACKET_CS_MOVE_START packet;
+
+		CS_MOVE_START(&header, &packet, dfACTION_MOVE_DD, GetCurX(), GetCurY());
+		if (!SendPacket(&header, (char*)&packet))
+		{
+			return false;
+		}
 	}
 	break;
 	case dfACTION_MOVE_LD:
@@ -196,36 +326,154 @@ void CPlayerObject::InputActionProc()
 		SetPosition(_iCurX - dfSPEED_PLAYER_X, _iCurY + dfSPEED_PLAYER_Y);
 		SetDirection(dfDIR_LEFT);
 		SetActionMove(_dwActionInput);
+		if (_dwActionCur == _dwActionOld)
+		{
+			break;
+		}
+
+		if (!_bPlayerCharacter)
+		{
+			break;
+		}
+
+		st_NETWORK_PACKET_HEADER header;
+		stPACKET_CS_MOVE_START packet;
+
+		CS_MOVE_START(&header, &packet, dfACTION_MOVE_LD, GetCurX(), GetCurY());
+		if (!SendPacket(&header, (char*)&packet))
+		{
+			return false;
+		}
 	}
 	break;
 	case dfACTION_ATTACK1:
 	{
-		// 공격 액션 후에 일단 _dwActionInput을 9999 로 변경
-		// 나중에 공격이 끝난 후 _dwActionInput를 STAND로 변경할때
-		// 실제로 새로운 입력이 들어왔으면 STAND로 변경하지 않는다.
 		SetActionAttack1();
 		_dwActionInput = dfACTION_STAND;
+
+		if (!_bPlayerCharacter)
+		{
+			break;
+		}
+
+		if (_dwActionOld >= dfACTION_MOVE_LL && _dwActionOld <= dfACTION_MOVE_LD)
+		{
+			st_NETWORK_PACKET_HEADER tempHeader;
+			stPACKET_CS_MOVE_STOP tempPacket;
+
+			CS_MOVE_STOP(&tempHeader, &tempPacket, GetDirection(), GetCurX(), GetCurY());
+			if (!SendPacket(&tempHeader, (char*)&tempPacket))
+			{
+				return false;
+			}
+		}
+
+		st_NETWORK_PACKET_HEADER header;
+		stPACKET_CS_ATTACK1 packet;
+		CS_ATTACK1(&header, &packet, GetDirection(), GetCurX(), GetCurY());
+		if (!SendPacket(&header, (char*)&packet))
+		{
+			return false;
+		}
 	}
 	break;
 	case dfACTION_ATTACK2:
 	{
 		SetActionAttack2();
 		_dwActionInput = dfACTION_STAND;
+
+		if (!_bPlayerCharacter)
+		{
+			break;
+		}
+
+		int nowSprite = GetSprite();
+		if (_dwActionOld >= dfACTION_MOVE_LL && _dwActionOld <= dfACTION_MOVE_LD)
+		{
+			st_NETWORK_PACKET_HEADER tempHeader;
+			stPACKET_CS_MOVE_STOP tempPacket;
+
+			CS_MOVE_STOP(&tempHeader, &tempPacket, GetDirection(), GetCurX(), GetCurY());
+			if (!SendPacket(&tempHeader, (char*)&tempPacket))
+			{
+				return false;
+			}
+		}
+
+		st_NETWORK_PACKET_HEADER header;
+		stPACKET_CS_ATTACK2 packet;
+
+		CS_ATTACK2(&header, &packet, GetDirection(), GetCurX(), GetCurY());
+		if (!SendPacket(&header, (char*)&packet))
+		{
+			return false;
+		}
 	}
 	break;
 	case dfACTION_ATTACK3:
 	{
 		SetActionAttack3();
 		_dwActionInput = dfACTION_STAND;
+
+		if (!_bPlayerCharacter)
+		{
+			break;
+		}
+
+		int nowSprite = GetSprite();
+		if (_dwActionOld >= dfACTION_MOVE_LL && _dwActionOld <= dfACTION_MOVE_LD)
+		{
+			st_NETWORK_PACKET_HEADER tempHeader;
+			stPACKET_CS_MOVE_STOP tempPacket;
+
+			CS_MOVE_STOP(&tempHeader, &tempPacket, GetDirection(), GetCurX(), GetCurY());
+			if (!SendPacket(&tempHeader, (char*)&tempPacket))
+			{
+				return false;
+			}
+		}
+
+		st_NETWORK_PACKET_HEADER header;
+		stPACKET_CS_ATTACK3 packet;
+
+		CS_ATTACK3(&header, &packet, GetDirection(), GetCurX(), GetCurY());
+		if (!SendPacket(&header, (char*)&packet))
+		{
+			return false;
+		}
 	}
 	break;
 	case dfACTION_STAND:
 	{
+		_dwActionOld = _dwActionCur;
+		_dwActionCur = dfACTION_STAND;
+
+		if (_dwActionCur == _dwActionOld)
+		{
+			break;
+		}
+
 		// 기본 입력은 스탠드이다.
 		SetActionStand();
+
+		if (!_bPlayerCharacter)
+		{
+			break;
+		}
+
+		st_NETWORK_PACKET_HEADER header;
+		stPACKET_CS_MOVE_STOP packet;
+
+		CS_MOVE_STOP(&header, &packet, GetDirection(), GetCurX(), GetCurY());
+		if (!SendPacket(&header, (char*)&packet))
+		{
+			return false;
+		}
 	}
 	break;
 	}
+
+	return true;
 }
 
 void CPlayerObject::SetActionAttack1(void)
@@ -298,7 +546,7 @@ void CPlayerObject::SetActionMove(DWORD action)
 			SetSprite(ePLAYER_MOVE_R01, ePLAYER_MOVE_R_MAX, dfDELAY_MOVE);
 		}
 
-		wcout << L"Set Action Move" << endl;
+		//wcout << L"Set Action Move" << endl;
 	}
 
 	_dwActionOld = _dwActionCur;
@@ -307,8 +555,8 @@ void CPlayerObject::SetActionMove(DWORD action)
 
 void CPlayerObject::SetActionStand(void)
 {
-	_dwActionOld = _dwActionCur;
-	_dwActionCur = dfACTION_STAND;
+	//_dwActionOld = _dwActionCur;
+	//_dwActionCur = dfACTION_STAND;
 
 	if (_dwActionCur == _dwActionOld)
 	{
