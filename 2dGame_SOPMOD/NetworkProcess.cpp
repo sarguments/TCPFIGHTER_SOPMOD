@@ -480,7 +480,7 @@ void SC_MOVE_STOP(char* packet)
 	pBaseObj->SetPosition(localBuf->_X, localBuf->_Y);
 	pBaseObj->ActionInput(dfACTION_STAND);
 
-	wcout << L"________SC_MOVE_STOP________" << endl;
+	//wcout << L"________SC_MOVE_STOP________" << endl;
 }
 
 void SC_ATTACK1(char* packet)

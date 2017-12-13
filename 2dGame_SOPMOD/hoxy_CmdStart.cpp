@@ -34,9 +34,9 @@ CCmdStart::CCmdStart()
 	*/
 
 	// 콘솔 창 띄우기
-	AllocConsole();
-	FILE *acStreamOut;
-	freopen_s(&acStreamOut, "CONOUT$", "wt", stdout);
+	//AllocConsole();
+	//FILE *acStreamOut;
+	//freopen_s(&acStreamOut, "CONOUT$", "wt", stdout);
 
 	//_wsetlocale(LC_ALL, L"");
 	//std::locale::global(std::locale(""));
@@ -47,7 +47,7 @@ CCmdStart::CCmdStart()
 CCmdStart::~CCmdStart()
 {
 	timeEndPeriod(1);
-	FreeConsole();
+	//FreeConsole();
 }
 
 void CCmdStart::CmdDebugText(WCHAR* text, bool bParam)

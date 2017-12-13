@@ -10,6 +10,9 @@
 CPlayerObject::CPlayerObject(CHAR hp, bool bPlayer, int dir)
 	: _chHP(hp), _bPlayerCharacter(bPlayer)
 {
+	// 지정 안할 경우 첫 접속때 위아래 이동 문제생김
+	_dwActionCur = dfACTION_STAND;
+
 	SetDirection(dir);
 	SetObjectType(e_OBJECT_TYPE::eTYPE_PLAYER);
 }
@@ -96,7 +99,7 @@ void CPlayerObject::ActionProc(void)
 		return;
 	}
 
-	wcout << L"Old : " << _dwActionOld << L"// Cur : " << _dwActionCur << endl;
+	//wcout << L"Old : " << _dwActionOld << L"// Cur : " << _dwActionCur << endl;
 
 	_dwActionOld = _dwActionCur;
 
@@ -543,7 +546,7 @@ void CPlayerObject::SetActionMove(DWORD action)
 			SetSprite(ePLAYER_MOVE_R01, ePLAYER_MOVE_R_MAX, dfDELAY_MOVE);
 		}
 
-		wcout << L"Set Action Move" << endl;
+		//wcout << L"Set Action Move" << endl;
 	}
 
 	_dwActionOld = _dwActionCur;

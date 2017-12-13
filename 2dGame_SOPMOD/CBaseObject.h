@@ -31,6 +31,7 @@ protected:
 protected:
 	bool _bEndFrame;
 	DWORD _dwActionInput;
+
 	int _iCurX;
 	int _iCurY;
 	int _iDelayCount;

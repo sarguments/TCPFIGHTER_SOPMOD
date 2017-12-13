@@ -74,7 +74,7 @@ bool CEffectObject::Action(void)
 	{
 	case dfACTION_ATTACK1:
 	{
-		wcout << L"dfACTION_ATTACK1" << endl;
+		//wcout << L"dfACTION_ATTACK1" << endl;
 
 		// 해당 공격의 이펙트 시작지점에서(GetSprite) 이펙트를 그린다.
 		if (nowSprite == ePLAYER_ATTACK1_L02 || nowSprite == ePLAYER_ATTACK1_R02)
@@ -86,7 +86,7 @@ bool CEffectObject::Action(void)
 	break;
 	case dfACTION_ATTACK2:
 	{
-		wcout << L"dfACTION_ATTACK2" << endl;
+		//wcout << L"dfACTION_ATTACK2" << endl;
 
 		if (nowSprite == ePLAYER_ATTACK2_L02 || nowSprite == ePLAYER_ATTACK2_R02)
 		{
@@ -97,7 +97,7 @@ bool CEffectObject::Action(void)
 	break;
 	case dfACTION_ATTACK3:
 	{
-		wcout << L"dfACTION_ATTACK3" << endl;
+		//wcout << L"dfACTION_ATTACK3" << endl;
 
 		if (nowSprite == ePLAYER_ATTACK3_L03 || nowSprite == ePLAYER_ATTACK3_R03)
 		{
