@@ -9,6 +9,7 @@
 #include "CEffectObject.h"
 
 #include "NetworkProcess.h"
+#include "SerializeBuffer_CZ75.h"
 
 int SendEvent(void)
 {
@@ -130,7 +131,6 @@ int ProcRead(void)
 	while (1)
 	{
 		char tempHeaderBuf[1000];
-		char tempBuf[1000];
 
 		// 헤더사이즈만큼 있는지
 		int ret_peek = g_recvQ.Peek((char*)tempHeaderBuf, HEADERSIZE);
@@ -154,19 +154,25 @@ int ProcRead(void)
 		// peek 했으니까 디큐 다시 하지말고 그만큼 HEADERSIZE 이동
 		g_recvQ.MoveFrontPos(HEADERSIZE);
 
+		// 리시브 큐에 받아서 직렬화버퍼에 넣고 빼서 쓴다.
+		CPacket packetBuf;
+
 		// 페이로드 크기 만큼 디큐
-		int ret_dequeue = g_recvQ.Dequeue((char*)tempBuf, pLocalHeader->_Size);
+		int ret_dequeue = g_recvQ.Dequeue(packetBuf.GetBufferPtr(), pLocalHeader->_Size);
 		if (ret_dequeue != pLocalHeader->_Size)
 		{
 			CCmdStart::CmdDebugText(L"Dequeue()", false);
 			return -1;
 		}
 
+		// 디큐 된 만큼 직렬화버퍼 rear 이동
+		packetBuf.MoveRearPos(ret_dequeue);
+
 		// 안쓰는 엔드코드 만큼 front 이동
 		g_recvQ.MoveFrontPos(1);
 
 		// 패킷 처리
-		RecvPacketProc(pLocalHeader->_Type, tempBuf);
+		RecvPacketProc(pLocalHeader->_Type, &packetBuf);
 	}
 
 	return ret_recv;
@@ -259,7 +265,7 @@ bool NetworkProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	return true;
 }
 
-void RecvPacketProc(BYTE type, char* packet)
+void RecvPacketProc(BYTE type, CPacket* packet)
 {
 	switch (type)
 	{
@@ -316,15 +322,20 @@ void RecvPacketProc(BYTE type, char* packet)
 	}
 }
 
-void SC_CREATE_MY_CHARACTER(char* packet)
+void SC_CREATE_MY_CHARACTER(CPacket* packet)
 {
-	stPACKET_SC_CREATE_MY_CHARACTER* localBuf = (stPACKET_SC_CREATE_MY_CHARACTER*)packet;
+	stPACKET_SC_CREATE_MY_CHARACTER localBuf;
+	(*packet) >> localBuf._ID;
+	(*packet) >> localBuf._Direction;
+	(*packet) >> localBuf._X;
+	(*packet) >> localBuf._Y;
+	(*packet) >> localBuf._HP;
 
-	CBaseObject* newObject = new CPlayerObject(localBuf->_HP, true, localBuf->_Direction);
-	newObject->SetPosition(localBuf->_X, localBuf->_Y);
-	newObject->SetObjectID(localBuf->_ID);
+	CBaseObject* newObject = new CPlayerObject(localBuf._HP, true, localBuf._Direction);
+	newObject->SetPosition(localBuf._X, localBuf._Y);
+	newObject->SetObjectID(localBuf._ID);
 
-	if (localBuf->_Direction == dfDIR_LEFT)
+	if (localBuf._Direction == dfDIR_LEFT)
 	{
 		newObject->SetSprite(e_SPRITE::ePLAYER_STAND_L01, e_SPRITE::ePLAYER_STAND_L_MAX, dfDELAY_STAND);
 	}
@@ -337,17 +348,22 @@ void SC_CREATE_MY_CHARACTER(char* packet)
 	g_ObjectList.push_back(newObject);
 }
 
-void SC_CREATE_OTHER_CHARACTER(char* packet)
+void SC_CREATE_OTHER_CHARACTER(CPacket* packet)
 {
-	stPACKET_SC_CREATE_OTHER_CHARACTER* localBuf = (stPACKET_SC_CREATE_OTHER_CHARACTER*)packet;
+	stPACKET_SC_CREATE_OTHER_CHARACTER localBuf;
+	(*packet) >> localBuf._ID;
+	(*packet) >> localBuf._Direction;
+	(*packet) >> localBuf._X;
+	(*packet) >> localBuf._Y;
+	(*packet) >> localBuf._HP;
 
-	CBaseObject* newObject = new CPlayerObject(localBuf->_HP, false, localBuf->_Direction);
-	newObject->SetPosition(localBuf->_X, localBuf->_Y);
-	newObject->SetObjectID(localBuf->_ID);
+	CBaseObject* newObject = new CPlayerObject(localBuf._HP, false, localBuf._Direction);
+	newObject->SetPosition(localBuf._X, localBuf._Y);
+	newObject->SetObjectID(localBuf._ID);
 
 	wcout << L"_bPlayerCharacter = " << ((CPlayerObject*)newObject)->_bPlayerCharacter << endl;
 
-	if (localBuf->_Direction == dfDIR_LEFT)
+	if (localBuf._Direction == dfDIR_LEFT)
 	{
 		newObject->SetSprite(e_SPRITE::ePLAYER_STAND_L01, e_SPRITE::ePLAYER_STAND_L_MAX, dfDELAY_STAND);
 	}
@@ -359,15 +375,16 @@ void SC_CREATE_OTHER_CHARACTER(char* packet)
 	g_ObjectList.push_back(newObject);
 }
 
-void SC_DELETE_CHARACTER(char* packet)
+void SC_DELETE_CHARACTER(CPacket* packet)
 {
-	stPACKET_SC_DELETE_CHARACTER* localBuf = (stPACKET_SC_DELETE_CHARACTER*)packet;
+	stPACKET_SC_DELETE_CHARACTER localBuf;
+	(*packet) >> localBuf._ID;
 
 	// 일치하는 아이디를 찾고
 	auto iter = std::find_if(g_ObjectList.begin(), g_ObjectList.end(),
 		[=](CBaseObject* param) {
 		if (param->GetObjectType() == e_OBJECT_TYPE::eTYPE_PLAYER &&
-			param->GetObjectID() == localBuf->_ID)
+			param->GetObjectID() == localBuf._ID)
 		{
 			return true;
 		}
@@ -388,15 +405,19 @@ void SC_DELETE_CHARACTER(char* packet)
 	wcout << L"SC_DELETE_CHARACTER ID : " << localID << endl;
 }
 
-void SC_MOVE_START(char* packet)
+void SC_MOVE_START(CPacket* packet)
 {
-	stPACKET_SC_MOVE_START* localBuf = (stPACKET_SC_MOVE_START*)packet;
+	stPACKET_SC_MOVE_START localBuf;
+	(*packet) >> localBuf._ID;
+	(*packet) >> localBuf._Direction;
+	(*packet) >> localBuf._X;
+	(*packet) >> localBuf._Y;
 
 	// 일치하는 아이디를 찾고
 	auto iter = std::find_if(g_ObjectList.begin(), g_ObjectList.end(),
 		[=](CBaseObject* param) {
 		if (param->GetObjectType() == e_OBJECT_TYPE::eTYPE_PLAYER &&
-			param->GetObjectID() == localBuf->_ID)
+			param->GetObjectID() == localBuf._ID)
 		{
 			return true;
 		}
@@ -409,7 +430,10 @@ void SC_MOVE_START(char* packet)
 		return;
 	}
 
-	switch (localBuf->_Direction)
+	// TODO : x, y 역할이 없는데?
+	(*iter)->SetPosition(localBuf._X, localBuf._Y);
+
+	switch (localBuf._Direction)
 	{
 	case dfACTION_MOVE_LL:
 	{
@@ -454,15 +478,19 @@ void SC_MOVE_START(char* packet)
 	}
 }
 
-void SC_MOVE_STOP(char* packet)
+void SC_MOVE_STOP(CPacket* packet)
 {
-	stPACKET_SC_MOVE_STOP* localBuf = (stPACKET_SC_MOVE_STOP*)packet;
+	stPACKET_SC_MOVE_STOP localBuf;
+	(*packet) >> localBuf._ID;
+	(*packet) >> localBuf._Direction;
+	(*packet) >> localBuf._X;
+	(*packet) >> localBuf._Y;
 
 	// 일치하는 아이디를 찾고
 	auto iter = std::find_if(g_ObjectList.begin(), g_ObjectList.end(),
 		[=](CBaseObject* param) {
 		if (param->GetObjectType() == e_OBJECT_TYPE::eTYPE_PLAYER &&
-			param->GetObjectID() == localBuf->_ID)
+			param->GetObjectID() == localBuf._ID)
 		{
 			return true;
 		}
@@ -476,22 +504,27 @@ void SC_MOVE_STOP(char* packet)
 	}
 
 	CPlayerObject* pBaseObj = (CPlayerObject*)(*iter);
-	pBaseObj->SetDirection(localBuf->_Direction);
-	pBaseObj->SetPosition(localBuf->_X, localBuf->_Y);
+	pBaseObj->SetDirection(localBuf._Direction);
+	pBaseObj->SetPosition(localBuf._X, localBuf._Y);
 	pBaseObj->ActionInput(dfACTION_STAND);
 
 	//wcout << L"________SC_MOVE_STOP________" << endl;
 }
 
-void SC_ATTACK1(char* packet)
+void SC_ATTACK1(CPacket* packet)
 {
-	stPACKET_SC_ATTACK1* localBuf = (stPACKET_SC_ATTACK1*)packet;
+	stPACKET_SC_ATTACK1 localBuf;
+	(*packet) >> localBuf._ID;
+	(*packet) >> localBuf._Direction;
+	(*packet) >> localBuf._X;
+	(*packet) >> localBuf._Y;
+
 
 	// 일치하는 아이디를 찾고
 	auto iter = std::find_if(g_ObjectList.begin(), g_ObjectList.end(),
 		[=](CBaseObject* param) {
 		if (param->GetObjectType() == e_OBJECT_TYPE::eTYPE_PLAYER &&
-			param->GetObjectID() == localBuf->_ID)
+			param->GetObjectID() == localBuf._ID)
 		{
 			return true;
 		}
@@ -504,25 +537,32 @@ void SC_ATTACK1(char* packet)
 		return;
 	}
 
+	// TODO : x, y ?
+	(*iter)->SetPosition(localBuf._X, localBuf._Y);
+
 	CPlayerObject* pPlayerObj = (CPlayerObject*)(*iter);
 	int dir = pPlayerObj->GetDirection();
-	if (dir != localBuf->_Direction)
+	if (dir != localBuf._Direction)
 	{
-		pPlayerObj->SetDirection(localBuf->_Direction);
+		pPlayerObj->SetDirection(localBuf._Direction);
 	}
 
 	pPlayerObj->ActionInput(dfACTION_ATTACK1);
 }
 
-void SC_ATTACK2(char* packet)
+void SC_ATTACK2(CPacket* packet)
 {
-	stPACKET_SC_ATTACK1* localBuf = (stPACKET_SC_ATTACK1*)packet;
+	stPACKET_SC_ATTACK2 localBuf;
+	(*packet) >> localBuf._ID;
+	(*packet) >> localBuf._Direction;
+	(*packet) >> localBuf._X;
+	(*packet) >> localBuf._Y;
 
 	// 일치하는 아이디를 찾고
 	auto iter = std::find_if(g_ObjectList.begin(), g_ObjectList.end(),
 		[=](CBaseObject* param) {
 		if (param->GetObjectType() == e_OBJECT_TYPE::eTYPE_PLAYER &&
-			param->GetObjectID() == localBuf->_ID)
+			param->GetObjectID() == localBuf._ID)
 		{
 			return true;
 		}
@@ -535,25 +575,32 @@ void SC_ATTACK2(char* packet)
 		return;
 	}
 
+	// TODO : x, y ?
+	(*iter)->SetPosition(localBuf._X, localBuf._Y);
+
 	CPlayerObject* pPlayerObj = (CPlayerObject*)(*iter);
 	int dir = pPlayerObj->GetDirection();
-	if (dir != localBuf->_Direction)
+	if (dir != localBuf._Direction)
 	{
-		pPlayerObj->SetDirection(localBuf->_Direction);
+		pPlayerObj->SetDirection(localBuf._Direction);
 	}
 
 	pPlayerObj->ActionInput(dfACTION_ATTACK2);
 }
 
-void SC_ATTACK3(char* packet)
+void SC_ATTACK3(CPacket* packet)
 {
-	stPACKET_SC_ATTACK1* localBuf = (stPACKET_SC_ATTACK1*)packet;
+	stPACKET_SC_ATTACK3 localBuf;
+	(*packet) >> localBuf._ID;
+	(*packet) >> localBuf._Direction;
+	(*packet) >> localBuf._X;
+	(*packet) >> localBuf._Y;
 
 	// 일치하는 아이디를 찾고
 	auto iter = std::find_if(g_ObjectList.begin(), g_ObjectList.end(),
 		[=](CBaseObject* param) {
 		if (param->GetObjectType() == e_OBJECT_TYPE::eTYPE_PLAYER &&
-			param->GetObjectID() == localBuf->_ID)
+			param->GetObjectID() == localBuf._ID)
 		{
 			return true;
 		}
@@ -566,25 +613,31 @@ void SC_ATTACK3(char* packet)
 		return;
 	}
 
+	// TODO : x, y ?
+	(*iter)->SetPosition(localBuf._X, localBuf._Y);
+
 	CPlayerObject* pPlayerObj = (CPlayerObject*)(*iter);
 	int dir = pPlayerObj->GetDirection();
-	if (dir != localBuf->_Direction)
+	if (dir != localBuf._Direction)
 	{
-		pPlayerObj->SetDirection(localBuf->_Direction);
+		pPlayerObj->SetDirection(localBuf._Direction);
 	}
 
 	pPlayerObj->ActionInput(dfACTION_ATTACK3);
 }
 
-void SC_DAMAGE(char* packet)
+void SC_DAMAGE(CPacket* packet)
 {
-	stPACKET_SC_DAMAGE* localBuf = (stPACKET_SC_DAMAGE*)packet;
+	stPACKET_SC_DAMAGE localBuf;
+	(*packet) >> localBuf._AttackID;
+	(*packet) >> localBuf._DamageID;
+	(*packet) >> localBuf._DamageHP;
 
 	// 일치하는 아이디를 찾고
 	auto iter = std::find_if(g_ObjectList.begin(), g_ObjectList.end(),
 		[=](CBaseObject* param) {
 		if (param->GetObjectType() == e_OBJECT_TYPE::eTYPE_PLAYER &&
-			param->GetObjectID() == localBuf->_DamageID)
+			param->GetObjectID() == localBuf._DamageID)
 		{
 			return true;
 		}
@@ -599,10 +652,10 @@ void SC_DAMAGE(char* packet)
 
 	// 데미지 적용
 	CPlayerObject* pPlayerObj = (CPlayerObject*)(*iter);
-	pPlayerObj->SetHP(localBuf->_DamageHP);
+	pPlayerObj->SetHP(localBuf._DamageHP);
 
 	// 이펙트 추가
-	CBaseObject* newEffect = new CEffectObject(localBuf->_AttackID, localBuf->_DamageID);
+	CBaseObject* newEffect = new CEffectObject(localBuf._AttackID, localBuf._DamageID);
 	g_ObjectList.push_back(newEffect);
 
 	wcout << L"****************New EFFECT" << endl;

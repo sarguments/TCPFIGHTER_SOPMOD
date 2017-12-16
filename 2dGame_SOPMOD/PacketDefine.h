@@ -379,6 +379,6 @@ struct stPACKET_SC_DAMAGE
 {
 	DWORD _AttackID;
 	DWORD _DamageID;
-	BYTE _DamageHP;
+	BYTE  _DamageHP;
 };
 #pragma pack(pop)

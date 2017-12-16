@@ -99,6 +99,9 @@
     <ClInclude Include="NetworkProcess.h">
       <Filter>헤더 파일\Process</Filter>
     </ClInclude>
+    <ClInclude Include="SerializeBuffer_CZ75.h">
+      <Filter>헤더 파일\Lib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -142,6 +145,9 @@
     </ClCompile>
     <ClCompile Include="NetworkProcess.cpp">
       <Filter>소스 파일\Process</Filter>
+    </ClCompile>
+    <ClCompile Include="SerializeBuffer_CZ75.cpp">
+      <Filter>소스 파일\Lib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
