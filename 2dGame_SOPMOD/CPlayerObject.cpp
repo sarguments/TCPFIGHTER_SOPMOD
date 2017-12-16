@@ -6,6 +6,7 @@
 #include "CSpriteDib.h"
 
 #include "NetworkProcess.h"
+#include "SerializeBuffer_CZ75.h"
 
 CPlayerObject::CPlayerObject(CHAR hp, bool bPlayer, int dir)
 	: _chHP(hp), _bPlayerCharacter(bPlayer)
@@ -161,11 +162,14 @@ bool CPlayerObject::InputActionProc()
 			break;
 		}
 
-		st_NETWORK_PACKET_HEADER header;
-		stPACKET_CS_MOVE_START packet;
+		CPacket packetBuf;
 
-		CS_MOVE_START(&header, &packet, dfACTION_MOVE_LL, GetCurX(), GetCurY());
-		if (!SendPacket(&header, (char*)&packet))
+		CS_MOVE_START(&packetBuf, dfACTION_MOVE_LL, GetCurX(), GetCurY());
+
+		BYTE endCode = dfNETWORK_PACKET_END;
+		packetBuf << endCode;
+
+		if (!SendPacket(&packetBuf))
 		{
 			return false;
 		}
@@ -186,11 +190,14 @@ bool CPlayerObject::InputActionProc()
 			break;
 		}
 
-		st_NETWORK_PACKET_HEADER header;
-		stPACKET_CS_MOVE_START packet;
+		CPacket packetBuf;
 
-		CS_MOVE_START(&header, &packet, dfACTION_MOVE_LU, GetCurX(), GetCurY());
-		if (!SendPacket(&header, (char*)&packet))
+		CS_MOVE_START(&packetBuf, dfACTION_MOVE_LU, GetCurX(), GetCurY());
+
+		BYTE endCode = dfNETWORK_PACKET_END;
+		packetBuf << endCode;
+
+		if (!SendPacket(&packetBuf))
 		{
 			return false;
 		}
@@ -211,11 +218,14 @@ bool CPlayerObject::InputActionProc()
 			break;
 		}
 
-		st_NETWORK_PACKET_HEADER header;
-		stPACKET_CS_MOVE_START packet;
+		CPacket packetBuf;
 
-		CS_MOVE_START(&header, &packet, dfACTION_MOVE_UU, GetCurX(), GetCurY());
-		if (!SendPacket(&header, (char*)&packet))
+		CS_MOVE_START(&packetBuf, dfACTION_MOVE_UU, GetCurX(), GetCurY());
+
+		BYTE endCode = dfNETWORK_PACKET_END;
+		packetBuf << endCode;
+
+		if (!SendPacket(&packetBuf))
 		{
 			return false;
 		}
@@ -236,11 +246,14 @@ bool CPlayerObject::InputActionProc()
 			break;
 		}
 
-		st_NETWORK_PACKET_HEADER header;
-		stPACKET_CS_MOVE_START packet;
+		CPacket packetBuf;
 
-		CS_MOVE_START(&header, &packet, dfACTION_MOVE_RU, GetCurX(), GetCurY());
-		if (!SendPacket(&header, (char*)&packet))
+		CS_MOVE_START(&packetBuf, dfACTION_MOVE_RU, GetCurX(), GetCurY());
+
+		BYTE endCode = dfNETWORK_PACKET_END;
+		packetBuf << endCode;
+
+		if (!SendPacket(&packetBuf))
 		{
 			return false;
 		}
@@ -261,11 +274,14 @@ bool CPlayerObject::InputActionProc()
 			break;
 		}
 
-		st_NETWORK_PACKET_HEADER header;
-		stPACKET_CS_MOVE_START packet;
+		CPacket packetBuf;
 
-		CS_MOVE_START(&header, &packet, dfACTION_MOVE_RR, GetCurX(), GetCurY());
-		if (!SendPacket(&header, (char*)&packet))
+		CS_MOVE_START(&packetBuf, dfACTION_MOVE_RR, GetCurX(), GetCurY());
+
+		BYTE endCode = dfNETWORK_PACKET_END;
+		packetBuf << endCode;
+
+		if (!SendPacket(&packetBuf))
 		{
 			return false;
 		}
@@ -286,11 +302,14 @@ bool CPlayerObject::InputActionProc()
 			break;
 		}
 
-		st_NETWORK_PACKET_HEADER header;
-		stPACKET_CS_MOVE_START packet;
+		CPacket packetBuf;
 
-		CS_MOVE_START(&header, &packet, dfACTION_MOVE_RD, GetCurX(), GetCurY());
-		if (!SendPacket(&header, (char*)&packet))
+		CS_MOVE_START(&packetBuf, dfACTION_MOVE_RD, GetCurX(), GetCurY());
+
+		BYTE endCode = dfNETWORK_PACKET_END;
+		packetBuf << endCode;
+
+		if (!SendPacket(&packetBuf))
 		{
 			return false;
 		}
@@ -311,11 +330,14 @@ bool CPlayerObject::InputActionProc()
 			break;
 		}
 
-		st_NETWORK_PACKET_HEADER header;
-		stPACKET_CS_MOVE_START packet;
+		CPacket packetBuf;
 
-		CS_MOVE_START(&header, &packet, dfACTION_MOVE_DD, GetCurX(), GetCurY());
-		if (!SendPacket(&header, (char*)&packet))
+		CS_MOVE_START(&packetBuf, dfACTION_MOVE_DD, GetCurX(), GetCurY());
+
+		BYTE endCode = dfNETWORK_PACKET_END;
+		packetBuf << endCode;
+
+		if (!SendPacket(&packetBuf))
 		{
 			return false;
 		}
@@ -336,16 +358,20 @@ bool CPlayerObject::InputActionProc()
 			break;
 		}
 
-		st_NETWORK_PACKET_HEADER header;
-		stPACKET_CS_MOVE_START packet;
+		CPacket packetBuf;
 
-		CS_MOVE_START(&header, &packet, dfACTION_MOVE_LD, GetCurX(), GetCurY());
-		if (!SendPacket(&header, (char*)&packet))
+		CS_MOVE_START(&packetBuf, dfACTION_MOVE_LD, GetCurX(), GetCurY());
+
+		BYTE endCode = dfNETWORK_PACKET_END;
+		packetBuf << endCode;
+
+		if (!SendPacket(&packetBuf))
 		{
 			return false;
 		}
 	}
 	break;
+	/*
 	case dfACTION_ATTACK1:
 	{
 		SetActionAttack1();
@@ -443,6 +469,7 @@ bool CPlayerObject::InputActionProc()
 		}
 	}
 	break;
+	*/
 	case dfACTION_STAND:
 	{
 		_dwActionOld = _dwActionCur;
@@ -461,11 +488,14 @@ bool CPlayerObject::InputActionProc()
 			break;
 		}
 
-		st_NETWORK_PACKET_HEADER header;
-		stPACKET_CS_MOVE_STOP packet;
+		CPacket packetBuf;
 
-		CS_MOVE_STOP(&header, &packet, GetDirection(), GetCurX(), GetCurY());
-		if (!SendPacket(&header, (char*)&packet))
+		CS_MOVE_STOP(&packetBuf, GetDirection(), GetCurX(), GetCurY());
+
+		BYTE endCode = dfNETWORK_PACKET_END;
+		packetBuf << endCode;
+
+		if (!SendPacket(&packetBuf))
 		{
 			return false;
 		}

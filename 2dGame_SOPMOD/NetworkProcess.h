@@ -17,7 +17,7 @@ extern std::list<CBaseObject*> g_ObjectList;
 
 // SEND //
 int SendEvent(void);
-bool SendPacket(st_NETWORK_PACKET_HEADER* header, char* packet);
+bool SendPacket(CPacket* packet);
 
 // RECEV //
 int ProcRead(void);
@@ -39,8 +39,8 @@ void SC_ATTACK3(CPacket* packet);
 void SC_DAMAGE(CPacket* packet);
 
 ////////// CS //////////
-void CS_MOVE_START(st_NETWORK_PACKET_HEADER* header, stPACKET_CS_MOVE_START* packet, BYTE dir, WORD x, WORD y);
-void CS_MOVE_STOP(st_NETWORK_PACKET_HEADER* header, stPACKET_CS_MOVE_STOP* packet, BYTE dir, WORD x, WORD y);
+void CS_MOVE_START(CPacket* packet, BYTE dir, WORD x, WORD y);
+void CS_MOVE_STOP(CPacket* packet, BYTE dir, WORD x, WORD y);
 void CS_ATTACK1(st_NETWORK_PACKET_HEADER* header, stPACKET_CS_ATTACK1* packet, BYTE dir, WORD x, WORD y);
 void CS_ATTACK2(st_NETWORK_PACKET_HEADER* header, stPACKET_CS_ATTACK2* packet, BYTE dir, WORD x, WORD y);
 void CS_ATTACK3(st_NETWORK_PACKET_HEADER* header, stPACKET_CS_ATTACK3* packet, BYTE dir, WORD x, WORD y);

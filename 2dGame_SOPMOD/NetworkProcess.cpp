@@ -66,7 +66,7 @@ int SendEvent(void)
 	return 0;
 }
 
-bool SendPacket(st_NETWORK_PACKET_HEADER * header, char * packet)
+bool SendPacket(CPacket* packet)
 {
 	if (!g_isConnected)
 	{
@@ -75,23 +75,8 @@ bool SendPacket(st_NETWORK_PACKET_HEADER * header, char * packet)
 	}
 
 	// 일단 넣어보고 리턴값 != size 면 리턴 -1
-	int ret_enqueue = g_sendQ.Enqueue((char*)header, sizeof(st_NETWORK_PACKET_HEADER));
-	if (ret_enqueue != sizeof(st_NETWORK_PACKET_HEADER))
-	{
-		CCmdStart::CmdDebugText(L"sendQ enqueue", false);
-		return false;
-	}
-
-	ret_enqueue = g_sendQ.Enqueue((char*)packet, header->_Size);
-	if (ret_enqueue != header->_Size)
-	{
-		CCmdStart::CmdDebugText(L"sendQ enqueue", false);
-		return false;
-	}
-
-	BYTE endCode = dfNETWORK_PACKET_END;
-	ret_enqueue = g_sendQ.Enqueue((char*)&endCode, sizeof(BYTE));
-	if (ret_enqueue != sizeof(BYTE))
+	int ret_enqueue = g_sendQ.Enqueue(packet->GetBufferPtr(), packet->GetDataSize());
+	if (ret_enqueue != packet->GetDataSize())
 	{
 		CCmdStart::CmdDebugText(L"sendQ enqueue", false);
 		return false;
@@ -661,26 +646,29 @@ void SC_DAMAGE(CPacket* packet)
 	wcout << L"****************New EFFECT" << endl;
 }
 
-void CS_MOVE_START(st_NETWORK_PACKET_HEADER * header, stPACKET_CS_MOVE_START * packet, BYTE dir, WORD x, WORD y)
+void CS_MOVE_START(CPacket* packet, BYTE dir, WORD x, WORD y)
 {
-	header->_Code = dfNETWORK_PACKET_CODE;
-	header->_Size = sizeof(stPACKET_CS_MOVE_START);
-	header->_Type = dfPACKET_CS_MOVE_START;
+	(*packet) << (BYTE)dfNETWORK_PACKET_CODE;
+	(*packet) << (BYTE)sizeof(stPACKET_CS_MOVE_START);
+	(*packet) << (BYTE)dfPACKET_CS_MOVE_START;
+	(*packet) << (BYTE)0x00;
 
-	packet->_X = x;
-	packet->_Y = y;
-	packet->_Direction = dir;
+	(*packet) << dir;
+	(*packet) << x;
+	(*packet) << y;
+
 }
 
-void CS_MOVE_STOP(st_NETWORK_PACKET_HEADER * header, stPACKET_CS_MOVE_STOP * packet, BYTE dir, WORD x, WORD y)
+void CS_MOVE_STOP(CPacket* packet, BYTE dir, WORD x, WORD y)
 {
-	header->_Code = dfNETWORK_PACKET_CODE;
-	header->_Size = sizeof(stPACKET_CS_MOVE_STOP);
-	header->_Type = dfPACKET_CS_MOVE_STOP;
+	(*packet) << (BYTE)dfNETWORK_PACKET_CODE;
+	(*packet) << (BYTE)sizeof(stPACKET_CS_MOVE_STOP);
+	(*packet) << (BYTE)dfPACKET_CS_MOVE_STOP;
+	(*packet) << (BYTE)0x00;
 
-	packet->_X = x;
-	packet->_Y = y;
-	packet->_Direction = dir;
+	(*packet) << dir;
+	(*packet) << x;
+	(*packet) << y;
 }
 
 void CS_ATTACK1(st_NETWORK_PACKET_HEADER * header, stPACKET_CS_ATTACK1 * packet, BYTE dir, WORD x, WORD y)
