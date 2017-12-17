@@ -371,7 +371,7 @@ bool CPlayerObject::InputActionProc()
 		}
 	}
 	break;
-	/*
+	
 	case dfACTION_ATTACK1:
 	{
 		SetActionAttack1();
@@ -384,20 +384,27 @@ bool CPlayerObject::InputActionProc()
 
 		if (_dwActionOld >= dfACTION_MOVE_LL && _dwActionOld <= dfACTION_MOVE_LD)
 		{
-			st_NETWORK_PACKET_HEADER tempHeader;
-			stPACKET_CS_MOVE_STOP tempPacket;
+			CPacket packetBuf;
 
-			CS_MOVE_STOP(&tempHeader, &tempPacket, GetDirection(), GetCurX(), GetCurY());
-			if (!SendPacket(&tempHeader, (char*)&tempPacket))
+			CS_MOVE_STOP(&packetBuf, GetDirection(), GetCurX(), GetCurY());
+
+			BYTE endCode = dfNETWORK_PACKET_END;
+			packetBuf << endCode;
+
+			if (!SendPacket(&packetBuf))
 			{
 				return false;
 			}
 		}
 
-		st_NETWORK_PACKET_HEADER header;
-		stPACKET_CS_ATTACK1 packet;
-		CS_ATTACK1(&header, &packet, GetDirection(), GetCurX(), GetCurY());
-		if (!SendPacket(&header, (char*)&packet))
+		CPacket packetBuf;
+
+		CS_ATTACK1(&packetBuf, GetDirection(), GetCurX(), GetCurY());
+
+		BYTE endCode = dfNETWORK_PACKET_END;
+		packetBuf << endCode;
+
+		if (!SendPacket(&packetBuf))
 		{
 			return false;
 		}
@@ -413,24 +420,29 @@ bool CPlayerObject::InputActionProc()
 			break;
 		}
 
-		int nowSprite = GetSprite();
 		if (_dwActionOld >= dfACTION_MOVE_LL && _dwActionOld <= dfACTION_MOVE_LD)
 		{
-			st_NETWORK_PACKET_HEADER tempHeader;
-			stPACKET_CS_MOVE_STOP tempPacket;
+			CPacket packetBuf;
 
-			CS_MOVE_STOP(&tempHeader, &tempPacket, GetDirection(), GetCurX(), GetCurY());
-			if (!SendPacket(&tempHeader, (char*)&tempPacket))
+			CS_MOVE_STOP(&packetBuf, GetDirection(), GetCurX(), GetCurY());
+
+			BYTE endCode = dfNETWORK_PACKET_END;
+			packetBuf << endCode;
+
+			if (!SendPacket(&packetBuf))
 			{
 				return false;
 			}
 		}
 
-		st_NETWORK_PACKET_HEADER header;
-		stPACKET_CS_ATTACK2 packet;
+		CPacket packetBuf;
 
-		CS_ATTACK2(&header, &packet, GetDirection(), GetCurX(), GetCurY());
-		if (!SendPacket(&header, (char*)&packet))
+		CS_ATTACK2(&packetBuf, GetDirection(), GetCurX(), GetCurY());
+
+		BYTE endCode = dfNETWORK_PACKET_END;
+		packetBuf << endCode;
+
+		if (!SendPacket(&packetBuf))
 		{
 			return false;
 		}
@@ -446,30 +458,35 @@ bool CPlayerObject::InputActionProc()
 			break;
 		}
 
-		int nowSprite = GetSprite();
 		if (_dwActionOld >= dfACTION_MOVE_LL && _dwActionOld <= dfACTION_MOVE_LD)
 		{
-			st_NETWORK_PACKET_HEADER tempHeader;
-			stPACKET_CS_MOVE_STOP tempPacket;
+			CPacket packetBuf;
 
-			CS_MOVE_STOP(&tempHeader, &tempPacket, GetDirection(), GetCurX(), GetCurY());
-			if (!SendPacket(&tempHeader, (char*)&tempPacket))
+			CS_MOVE_STOP(&packetBuf, GetDirection(), GetCurX(), GetCurY());
+
+			BYTE endCode = dfNETWORK_PACKET_END;
+			packetBuf << endCode;
+
+			if (!SendPacket(&packetBuf))
 			{
 				return false;
 			}
 		}
 
-		st_NETWORK_PACKET_HEADER header;
-		stPACKET_CS_ATTACK3 packet;
+		CPacket packetBuf;
 
-		CS_ATTACK3(&header, &packet, GetDirection(), GetCurX(), GetCurY());
-		if (!SendPacket(&header, (char*)&packet))
+		CS_ATTACK3(&packetBuf, GetDirection(), GetCurX(), GetCurY());
+
+		BYTE endCode = dfNETWORK_PACKET_END;
+		packetBuf << endCode;
+
+		if (!SendPacket(&packetBuf))
 		{
 			return false;
 		}
 	}
 	break;
-	*/
+	
 	case dfACTION_STAND:
 	{
 		_dwActionOld = _dwActionCur;

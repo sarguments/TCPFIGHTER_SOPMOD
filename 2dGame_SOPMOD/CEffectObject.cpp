@@ -22,13 +22,13 @@ CEffectObject::CEffectObject(DWORD attackID, DWORD damagedID)
 		return false;
 	});
 
+	SetObjectType(e_OBJECT_TYPE::eTYPE_EFFECT);
+	SetSprite(eEFFECT_SPARK_01, eEFFECT_SPARK_04, dfDELAY_EFFECT);
+
 	CBaseObject* pPlayerObj = (*iter);
 	int plyaerX = pPlayerObj->GetCurX();
 	int playerY = pPlayerObj->GetCurY();
 	SetPosition(plyaerX, playerY - 40);
-
-	SetObjectType(e_OBJECT_TYPE::eTYPE_EFFECT);
-	SetSprite(eEFFECT_SPARK_01, eEFFECT_SPARK_04, dfDELAY_EFFECT);
 
 	static int effectNum = 100;
 	SetObjectID(effectNum);

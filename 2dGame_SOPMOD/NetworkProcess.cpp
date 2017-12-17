@@ -671,35 +671,38 @@ void CS_MOVE_STOP(CPacket* packet, BYTE dir, WORD x, WORD y)
 	(*packet) << y;
 }
 
-void CS_ATTACK1(st_NETWORK_PACKET_HEADER * header, stPACKET_CS_ATTACK1 * packet, BYTE dir, WORD x, WORD y)
+void CS_ATTACK1(CPacket* packet, BYTE dir, WORD x, WORD y)
 {
-	header->_Code = dfNETWORK_PACKET_CODE;
-	header->_Size = sizeof(stPACKET_CS_ATTACK1);
-	header->_Type = dfPACKET_CS_ATTACK1;
+	(*packet) << (BYTE)dfNETWORK_PACKET_CODE;
+	(*packet) << (BYTE)sizeof(stPACKET_CS_ATTACK1);
+	(*packet) << (BYTE)dfPACKET_CS_ATTACK1;
+	(*packet) << (BYTE)0x00;
 
-	packet->_X = x;
-	packet->_Y = y;
-	packet->_Direction = dir;
+	(*packet) << dir;
+	(*packet) << x;
+	(*packet) << y;
 }
 
-void CS_ATTACK2(st_NETWORK_PACKET_HEADER * header, stPACKET_CS_ATTACK2 * packet, BYTE dir, WORD x, WORD y)
+void CS_ATTACK2(CPacket* packet, BYTE dir, WORD x, WORD y)
 {
-	header->_Code = dfNETWORK_PACKET_CODE;
-	header->_Size = sizeof(stPACKET_CS_ATTACK2);
-	header->_Type = dfPACKET_CS_ATTACK2;
+	(*packet) << (BYTE)dfNETWORK_PACKET_CODE;
+	(*packet) << (BYTE)sizeof(stPACKET_CS_ATTACK2);
+	(*packet) << (BYTE)dfPACKET_CS_ATTACK2;
+	(*packet) << (BYTE)0x00;
 
-	packet->_X = x;
-	packet->_Y = y;
-	packet->_Direction = dir;
+	(*packet) << dir;
+	(*packet) << x;
+	(*packet) << y;
 }
 
-void CS_ATTACK3(st_NETWORK_PACKET_HEADER * header, stPACKET_CS_ATTACK3 * packet, BYTE dir, WORD x, WORD y)
+void CS_ATTACK3(CPacket* packet, BYTE dir, WORD x, WORD y)
 {
-	header->_Code = dfNETWORK_PACKET_CODE;
-	header->_Size = sizeof(stPACKET_CS_ATTACK3);
-	header->_Type = dfPACKET_CS_ATTACK3;
+	(*packet) << (BYTE)dfNETWORK_PACKET_CODE;
+	(*packet) << (BYTE)sizeof(stPACKET_CS_ATTACK3);
+	(*packet) << (BYTE)dfPACKET_CS_ATTACK3;
+	(*packet) << (BYTE)0x00;
 
-	packet->_X = x;
-	packet->_Y = y;
-	packet->_Direction = dir;
+	(*packet) << dir;
+	(*packet) << x;
+	(*packet) << y;
 }
