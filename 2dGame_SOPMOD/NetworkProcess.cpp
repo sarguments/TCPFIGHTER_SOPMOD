@@ -31,16 +31,8 @@ int SendEvent(void)
 			return 0;
 		}
 
-		// 일단 픽해서 센드하고 센드큐에서 보낸만큼 데이터 날림
-		char localBuf[1000];
-		int ret_peek = g_sendQ.Peek((char*)localBuf, UseSize);
-		if (ret_peek != UseSize)
-		{
-			CCmdStart::CmdDebugText(L"peek()", false);
-			return -1;
-		}
-
-		int ret_send = send(g_serverSock, localBuf, ret_peek, 0);
+		// 센드큐에서 보낸만큼 데이터 날림
+		int ret_send = send(g_serverSock, g_sendQ.GetFrontBufferPtr(), UseSize, 0);
 		if (ret_send == SOCKET_ERROR)
 		{
 			if (WSAGetLastError() == WSAEWOULDBLOCK)
@@ -87,9 +79,8 @@ bool SendPacket(CPacket* packet)
 
 int ProcRead(void)
 {
-	// recv 후 수신큐에 넣는다
-	char localBuf[1000];
-	int ret_recv = recv(g_serverSock, localBuf, 1000, 0);
+	// 수신큐에 리시브
+	int ret_recv = recv(g_serverSock, g_recvQ.GetRearBufferPtr(), g_recvQ.GetFreeSize(), 0);
 	if (ret_recv == SOCKET_ERROR)
 	{
 		if (WSAGetLastError() != WSAEWOULDBLOCK)
@@ -99,17 +90,12 @@ int ProcRead(void)
 		}
 	}
 
+	g_recvQ.MoveRearPos(ret_recv);
+
 	// 소켓종료 체크
 	if (ret_recv == 0)
 	{
 		wcout << L"closesocket" << endl;
-		return -1;
-	}
-
-	int ret_enqueue = g_recvQ.Enqueue(localBuf, ret_recv);
-	if (ret_enqueue != ret_recv)
-	{
-		CCmdStart::CmdDebugText(L"Enqueue()", false);
 		return -1;
 	}
 
@@ -302,6 +288,11 @@ void RecvPacketProc(BYTE type, CPacket* packet)
 	default:
 	{
 		CCmdStart::CmdDebugText(L"Fatal ERROR!!!!", false);
+
+		// TODO : 크래쉬
+		int* crash = nullptr;
+		*crash = 999;
+
 		return;
 	}
 	}
@@ -504,7 +495,6 @@ void SC_ATTACK1(CPacket* packet)
 	(*packet) >> localBuf._X;
 	(*packet) >> localBuf._Y;
 
-
 	// 일치하는 아이디를 찾고
 	auto iter = std::find_if(g_ObjectList.begin(), g_ObjectList.end(),
 		[=](CBaseObject* param) {
@@ -656,7 +646,6 @@ void CS_MOVE_START(CPacket* packet, BYTE dir, WORD x, WORD y)
 	(*packet) << dir;
 	(*packet) << x;
 	(*packet) << y;
-
 }
 
 void CS_MOVE_STOP(CPacket* packet, BYTE dir, WORD x, WORD y)

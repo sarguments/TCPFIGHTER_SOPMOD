@@ -114,9 +114,9 @@ void CBaseObject::SetPosition(int x, int y)
 	// 화면 이동영역 : 왼쪽 상단으로 이동 중 왼쪽 범위에 걸리면
 	//	위로 타고 이동하는게 아니며, 그자리에 멈춰야 함.
 	if (
-		(e_OBJECT_TYPE::eTYPE_EFFECT != objectType) && 
-			((x <= dfRANGE_MOVE_LEFT) || (x >= dfRANGE_MOVE_RIGHT) ||
-			(y <= dfRANGE_MOVE_TOP) || (y >= dfRANGE_MOVE_BOTTOM))
+		(e_OBJECT_TYPE::eTYPE_EFFECT != objectType) &&
+		((x <= dfRANGE_MOVE_LEFT) || (x >= dfRANGE_MOVE_RIGHT) ||
+		(y <= dfRANGE_MOVE_TOP) || (y >= dfRANGE_MOVE_BOTTOM))
 		)
 	{
 		return;

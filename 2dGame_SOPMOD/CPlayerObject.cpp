@@ -371,7 +371,7 @@ bool CPlayerObject::InputActionProc()
 		}
 	}
 	break;
-	
+
 	case dfACTION_ATTACK1:
 	{
 		SetActionAttack1();
@@ -486,7 +486,7 @@ bool CPlayerObject::InputActionProc()
 		}
 	}
 	break;
-	
+
 	case dfACTION_STAND:
 	{
 		_dwActionOld = _dwActionCur;
